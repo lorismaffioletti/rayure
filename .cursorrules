@@ -1,0 +1,37 @@
+# Cursor Rules — Rayure
+
+## Objectifs
+- Respecter le brief "Rayure" (CRM, événements, produits, notes de frais, to-do, recherche) et les écrans listés.
+- Priorité à la clarté, maintenabilité et mobile-first.
+
+## Stack
+- Next.js 15 + TypeScript strict, Tailwind, shadcn/ui, Supabase (Auth/DB/Storage).
+- dnd-kit (Kanban), react-day-picker (calendrier).
+
+## Architecture & Code
+- Dossiers: /app, /components, /features, /lib, /supabase, /types, /styles, /scripts.
+- Server Components par défaut; Client Components uniquement si nécessaire (DND, formulaires).
+- Types exhaustifs, pas de `any` sauf commentaire justifié.
+- Formatage: Prettier; ESLint sans warnings à la CI.
+- Nommage fichiers: kebab-case; composants React en PascalCase.
+- Pas de secrets en dur; utilise `process.env`.
+
+## Données & Sécurité
+- RLS activées par défaut; accès uniquement utilisateurs authentifiés.
+- Liste blanche via table `allowed_users(email, role)` pour Rayure.
+- Index, FTS et migrations versionnées dans /supabase/migrations.
+- Évolution de schéma = migration obligatoire.
+
+## UI/UX
+- Mobile-first; bottom nav; sidebar desktop.
+- shadcn/ui pour composants; cards, modals, listes, formulaires cohérents.
+- Accessibilité: labels, aria-*, contrastes raisonnables.
+
+## Git
+- Commits Conventional Commits (feat, fix, chore, refactor, docs, test).
+- PR/commits atomiques; inclure "why" si décision technique.
+
+## Interaction avec l'Agent
+- Toujours proposer un plan avant large refactor (>10 fichiers).
+- Demander validation avant: migrations, suppression de fichiers, push.
+

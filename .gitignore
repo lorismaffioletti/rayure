@@ -1,0 +1,10 @@
+# Node / Next
+node_modules
+.next
+out
+# Env
+.env*
+!.env.example
+# Misc
+.DS_Store
+
