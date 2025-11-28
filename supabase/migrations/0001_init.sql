@@ -196,6 +196,10 @@ create or replace function is_whitelisted() returns boolean as $$
 $$ language sql stable;
 
 -- Lecture/écriture pour utilisateurs authentifiés et whitelistés
+-- === RLS : policies par commande (fix) ===
+-- Prérequis : RLS déjà activée sur les tables (ton script le fait plus haut)
+-- Helper (déjà défini) : is_whitelisted()
+
 do $$
 declare
   t record;
@@ -203,33 +207,36 @@ begin
   for t in
     select tablename from pg_tables
     where schemaname = 'public'
-      and tablename in ('companies','contacts','contact_interactions','events','event_notes','products','product_prices','notes_frais','tasks','quick_links')
+      and tablename in (
+        'companies','contacts','contact_interactions','events','event_notes',
+        'products','product_prices','notes_frais','tasks','quick_links'
+      )
   loop
-    execute format('drop policy if exists %I_select on %I;', t.tablename || '_select', t.tablename);
-    execute format('drop policy if exists %I_write on %I;', t.tablename || '_write', t.tablename);
-    execute format('create policy %I_select on %I for select using (auth.role() = ''authenticated'' and is_whitelisted());', t.tablename || '_select', t.tablename);
-    execute format('create policy %I_write on %I for insert with check (auth.role() = ''authenticated'' and is_whitelisted())', t.tablename || '_write', t.tablename);
-    execute format('alter policy %I_write on %I add for update using (auth.role() = ''authenticated'' and is_whitelisted());', t.tablename || '_write', t.tablename);
-    execute format('alter policy %I_write on %I add for delete using (auth.role() = ''authenticated'' and is_whitelisted());', t.tablename || '_write', t.tablename);
+    -- nettoyer d’anciennes policies
+    execute format('drop policy if exists %I_select on %I;',  t.tablename || '_select',  t.tablename);
+    execute format('drop policy if exists %I_insert on %I;',  t.tablename || '_insert',  t.tablename);
+    execute format('drop policy if exists %I_update on %I;',  t.tablename || '_update',  t.tablename);
+    execute format('drop policy if exists %I_delete on %I;',  t.tablename || '_delete',  t.tablename);
+
+    -- recréer une policy par type de commande
+    execute format(
+      'create policy %I_select on %I for select using (auth.role() = ''authenticated'' and is_whitelisted());',
+      t.tablename || '_select', t.tablename
+    );
+
+    execute format(
+      'create policy %I_insert on %I for insert with check (auth.role() = ''authenticated'' and is_whitelisted());',
+      t.tablename || '_insert', t.tablename
+    );
+
+    execute format(
+      'create policy %I_update on %I for update using (auth.role() = ''authenticated'' and is_whitelisted());',
+      t.tablename || '_update', t.tablename
+    );
+
+    execute format(
+      'create policy %I_delete on %I for delete using (auth.role() = ''authenticated'' and is_whitelisted());',
+      t.tablename || '_delete', t.tablename
+    );
   end loop;
 end$$;
-
--- === Buckets Storage ===
-select storage.create_bucket('receipts', true, false); -- public=false
-select storage.create_bucket('logos', true, false);
-
--- RLS sur storage.objects (lecture/écriture si whitelisté)
-create policy receipts_read on storage.objects for select
-  using (bucket_id = 'receipts' and auth.role() = 'authenticated' and is_whitelisted());
-create policy receipts_write on storage.objects for insert
-  with check (bucket_id = 'receipts' and auth.role() = 'authenticated' and is_whitelisted());
-create policy receipts_delete on storage.objects for delete
-  using (bucket_id = 'receipts' and auth.role() = 'authenticated' and is_whitelisted());
-
-create policy logos_read on storage.objects for select
-  using (bucket_id = 'logos' and auth.role() = 'authenticated' and is_whitelisted());
-create policy logos_write on storage.objects for insert
-  with check (bucket_id = 'logos' and auth.role() = 'authenticated' and is_whitelisted());
-create policy logos_delete on storage.objects for delete
-  using (bucket_id = 'logos' and auth.role() = 'authenticated' and is_whitelisted());
-
