@@ -21,6 +21,7 @@ interface CompaniesListProps {
   companies: Company[];
 }
 
+export function CompaniesList({ companies }: CompaniesListProps) {
   if (companies.length === 0) {
     return (
       <EmptyState
