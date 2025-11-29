@@ -12,9 +12,11 @@ import { getQuickLinks } from '@/lib/supabase/queries/quick-links';
 export default function DashboardPage() {
   return (
     <div className="page">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground mt-2">
+      <div className="mb-8">
+        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-2">
+          Dashboard
+        </h1>
+        <p className="text-lg md:text-xl text-muted-foreground">
           Vue d'ensemble de votre activité
         </p>
       </div>
