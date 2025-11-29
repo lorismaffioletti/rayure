@@ -1,10 +1,14 @@
+'use client';
+
 import Link from 'next/link';
-import { Building2 } from 'lucide-react';
-import { getCompanies } from '@/lib/supabase/queries/companies';
+import { Building2, Pencil, Trash2 } from 'lucide-react';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/ui/empty-state';
-import type { CompanyType } from '@/types/database';
+import { EditCompanyModal } from '@/components/crm/edit-company-modal';
+import { DeleteCompanyButton } from '@/components/crm/delete-company-button';
+import type { CompanyType, Company } from '@/types/database';
 
 const COMPANY_TYPE_LABELS: Record<CompanyType, string> = {
   mairie: 'Mairie',
@@ -14,12 +18,8 @@ const COMPANY_TYPE_LABELS: Record<CompanyType, string> = {
 };
 
 interface CompaniesListProps {
-  type?: CompanyType;
-  search?: string;
+  companies: Company[];
 }
-
-export async function CompaniesList({ type, search }: CompaniesListProps) {
-  const companies = await getCompanies({ type, search });
 
   if (companies.length === 0) {
     return (
@@ -39,6 +39,7 @@ export async function CompaniesList({ type, search }: CompaniesListProps) {
             <TableHead>Nom</TableHead>
             <TableHead>Type</TableHead>
             <TableHead className="hidden sm:table-cell">Créé le</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -57,6 +58,22 @@ export async function CompaniesList({ type, search }: CompaniesListProps) {
               </TableCell>
               <TableCell className="hidden text-muted-foreground sm:table-cell">
                 {new Date(company.created_at).toLocaleDateString('fr-FR')}
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center justify-end gap-2">
+                  <EditCompanyModal company={company}>
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Pencil className="h-4 w-4" />
+                      <span className="sr-only">Modifier</span>
+                    </Button>
+                  </EditCompanyModal>
+                  <DeleteCompanyButton companyId={company.id} companyName={company.name}>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive">
+                      <Trash2 className="h-4 w-4" />
+                      <span className="sr-only">Supprimer</span>
+                    </Button>
+                  </DeleteCompanyButton>
+                </div>
               </TableCell>
             </TableRow>
           ))}

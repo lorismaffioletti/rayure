@@ -2,16 +2,24 @@ import { Suspense } from 'react';
 import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import { getCompanies } from '@/lib/supabase/queries/companies';
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 import { PageHeader } from '@/components/ui/page-header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { EmptyState } from '@/components/ui/empty-state';
 import { LoadingSkeleton } from '@/components/ui/loading-skeleton';
 import { CreateCompanyModal } from '@/components/crm/create-company-modal';
 import { CompaniesList } from '@/components/crm/companies-list';
 import type { CompanyType } from '@/types/database';
+
+async function CompaniesListWrapper({
+  type,
+  search,
+}: {
+  type?: CompanyType;
+  search?: string;
+}) {
+  const companies = await getCompanies({ type, search });
+  return <CompaniesList companies={companies} />;
+}
 
 interface CompaniesPageProps {
   searchParams: Promise<{ type?: string; search?: string }>;
@@ -44,7 +52,7 @@ export default async function CompaniesPage({ searchParams }: CompaniesPageProps
       </div>
 
       <Suspense fallback={<LoadingSkeleton type="table" />}>
-        <CompaniesList type={type} search={search} />
+        <CompaniesListWrapper type={type} search={search} />
       </Suspense>
     </div>
   );

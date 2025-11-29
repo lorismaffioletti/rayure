@@ -1,12 +1,16 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { Pencil, Trash2 } from 'lucide-react';
 import { getCompanyById, getCompanyContacts, getCompanyEvents } from '@/lib/supabase/queries/companies';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Table, TableHeader, TableRow, TableHead, TableCell } from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
 import { CreateContactButton } from '@/components/crm/create-contact-button';
 import { getCompanies } from '@/lib/supabase/queries/companies';
 import { CreateInteractionModal } from '@/components/crm/create-interaction-modal';
 import { CompanyTimeline } from '@/components/crm/company-timeline';
+import { EditCompanyModal } from '@/components/crm/edit-company-modal';
+import { DeleteCompanyButton } from '@/components/crm/delete-company-button';
 
 interface CompanyPageProps {
   params: Promise<{ id: string }>;
@@ -31,18 +35,34 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
     ]);
 
     return (
-      <div className="mx-auto max-w-6xl p-6">
-        <div className="mb-6">
-          <Link
-            href="/crm/companies"
-            className="text-sm text-neutral-600 hover:text-neutral-900"
-          >
-            ← Retour aux entreprises
-          </Link>
-          <h1 className="mt-2 text-2xl font-bold">{company.name}</h1>
-          <p className="mt-1 text-sm text-neutral-600">
-            {COMPANY_TYPE_LABELS[company.type] || company.type}
-          </p>
+      <div className="page">
+        <div className="mb-6 flex items-start justify-between">
+          <div>
+            <Link
+              href="/crm/companies"
+              className="text-sm text-muted-foreground hover:text-foreground"
+            >
+              ← Retour aux entreprises
+            </Link>
+            <h1 className="mt-2 text-3xl font-bold">{company.name}</h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {COMPANY_TYPE_LABELS[company.type] || company.type}
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <EditCompanyModal company={company}>
+              <Button variant="outline" size="sm">
+                <Pencil className="h-4 w-4 mr-2" />
+                Modifier
+              </Button>
+            </EditCompanyModal>
+            <DeleteCompanyButton companyId={company.id} companyName={company.name}>
+              <Button variant="destructive" size="sm">
+                <Trash2 className="h-4 w-4 mr-2" />
+                Supprimer
+              </Button>
+            </DeleteCompanyButton>
+          </div>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-2">
