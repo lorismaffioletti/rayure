@@ -5,7 +5,7 @@ import type { CreateInteractionInput } from '@/types/database';
 import { revalidatePath } from 'next/cache';
 
 export async function createInteraction(input: CreateInteractionInput) {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from('contact_interactions')
     .insert(input)

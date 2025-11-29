@@ -5,7 +5,7 @@ import type { CreateContactInput } from '@/types/database';
 import { revalidatePath } from 'next/cache';
 
 export async function createContact(input: CreateContactInput) {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from('contacts')
     .insert(input)
@@ -24,7 +24,7 @@ export async function createContact(input: CreateContactInput) {
 }
 
 export async function updateContact(id: string, input: Partial<CreateContactInput>) {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from('contacts')
     .update(input)
@@ -42,7 +42,7 @@ export async function updateContact(id: string, input: Partial<CreateContactInpu
 }
 
 export async function deleteContact(id: string) {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { error } = await supabase.from('contacts').delete().eq('id', id);
 
   if (error) {

@@ -5,7 +5,7 @@ import type { CreateCompanyInput } from '@/types/database';
 import { revalidatePath } from 'next/cache';
 
 export async function createCompany(input: CreateCompanyInput) {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from('companies')
     .insert(input)
@@ -21,7 +21,7 @@ export async function createCompany(input: CreateCompanyInput) {
 }
 
 export async function updateCompany(id: string, input: Partial<CreateCompanyInput>) {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from('companies')
     .update(input)
@@ -39,7 +39,7 @@ export async function updateCompany(id: string, input: Partial<CreateCompanyInpu
 }
 
 export async function deleteCompany(id: string) {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { error } = await supabase.from('companies').delete().eq('id', id);
 
   if (error) {

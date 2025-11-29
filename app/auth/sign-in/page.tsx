@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 
@@ -13,11 +13,14 @@ export default function SignInPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(
-    errorParam === 'not_allowed'
-      ? "Votre compte n'est pas autorisé à accéder à cette application."
-      : null,
-  );
+  const [error, setError] = useState<string | null>(null);
+
+  // Mettre à jour l'erreur quand l'URL change
+  useEffect(() => {
+    if (errorParam === 'not_allowed') {
+      setError("Votre compte n'est pas autorisé à accéder à cette application. Veuillez contacter l'administrateur.");
+    }
+  }, [errorParam]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -5,7 +5,7 @@ export async function getContacts(filters?: {
   companyId?: string;
   search?: string;
 }) {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   let query = supabase
     .from('contacts')
     .select('*, company:companies(*)')
@@ -32,7 +32,7 @@ export async function getContacts(filters?: {
 }
 
 export async function getContactById(id: string) {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from('contacts')
     .select('*, company:companies(*)')
@@ -47,7 +47,7 @@ export async function getContactById(id: string) {
 }
 
 export async function getContactInteractions(contactId: string) {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from('contact_interactions')
     .select('*')

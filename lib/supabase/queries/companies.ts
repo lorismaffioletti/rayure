@@ -5,7 +5,7 @@ export async function getCompanies(filters?: {
   type?: CompanyType;
   search?: string;
 }) {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   let query = supabase.from('companies').select('*').order('created_at', { ascending: false });
 
   if (filters?.type) {
@@ -29,7 +29,7 @@ export async function getCompanies(filters?: {
 }
 
 export async function getCompanyById(id: string) {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from('companies')
     .select('*')
@@ -44,7 +44,7 @@ export async function getCompanyById(id: string) {
 }
 
 export async function getCompanyContacts(companyId: string) {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from('contacts')
     .select('*')
@@ -59,7 +59,7 @@ export async function getCompanyContacts(companyId: string) {
 }
 
 export async function getCompanyEvents(companyId: string) {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from('events')
     .select('*, company:companies(*), contact:contacts(*)')

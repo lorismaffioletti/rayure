@@ -87,3 +87,40 @@ export interface CreateInteractionInput {
   content?: string;
 }
 
+export interface Product {
+  id: string;
+  name: string;
+  supplier_name: string | null;
+  created_at: string;
+}
+
+export interface ProductPrice {
+  id: string;
+  product_id: string;
+  price_ht: number;
+  price_ttc: number;
+  vat_rate: number;
+  created_at: string;
+}
+
+export interface Expense {
+  id: string;
+  title: string;
+  amount_ht: number;
+  vat_rate: number;
+  amount_ttc: number;
+  date: string;
+  receipt_url: string | null;
+  created_at: string;
+}
+
+export interface Task {
+  id: string;
+  title: string;
+  priority: number;
+  due_date: string | null;
+  is_done: boolean;
+  created_at: string;
+  done_at: string | null;
+}
+
