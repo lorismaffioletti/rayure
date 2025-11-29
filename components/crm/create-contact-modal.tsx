@@ -1,25 +1,38 @@
 'use client';
 
-import { useState } from 'react';
-import { Modal } from '@/components/ui/modal';
+import { useState, useEffect } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { createContact } from '@/app/actions/contacts';
+import { toast } from 'sonner';
+import { useRouter, useSearchParams } from 'next/navigation';
 import type { Company } from '@/types/database';
+import type { ReactNode } from 'react';
 
 interface CreateContactModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSuccess: () => void;
+  children?: ReactNode;
   defaultCompanyId?: string;
   companies: Company[];
 }
 
 export function CreateContactModal({
-  isOpen,
-  onClose,
-  onSuccess,
+  children,
   defaultCompanyId,
   companies,
 }: CreateContactModalProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [open, setOpen] = useState(false);
   const [first_name, setFirstName] = useState('');
   const [last_name, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -27,11 +40,18 @@ export function CreateContactModal({
   const [role, setRole] = useState('');
   const [company_id, setCompanyId] = useState<string>(defaultCompanyId || '');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+
+  // Ouvrir le modal si le paramètre create=true est présent
+  useEffect(() => {
+    if (searchParams.get('create') === 'true') {
+      setOpen(true);
+      // Nettoyer l'URL
+      router.replace('/crm/contacts', { scroll: false });
+    }
+  }, [searchParams, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
     setLoading(true);
 
     try {
@@ -43,133 +63,114 @@ export function CreateContactModal({
         role: role || undefined,
         company_id: company_id || undefined,
       });
+      toast.success('Contact créé avec succès');
       setFirstName('');
       setLastName('');
       setEmail('');
       setPhone('');
       setRole('');
       setCompanyId(defaultCompanyId || '');
-      onSuccess();
-      onClose();
+      setOpen(false);
+      router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Une erreur est survenue');
+      toast.error(err instanceof Error ? err.message : 'Une erreur est survenue');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Créer un contact">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {error && (
-          <div className="rounded-md bg-red-50 p-3 text-sm text-red-800">{error}</div>
-        )}
+    <Dialog open={open} onOpenChange={setOpen}>
+      {children && <DialogTrigger asChild>{children}</DialogTrigger>}
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Créer un contact</DialogTitle>
+          <DialogDescription>
+            Ajoutez un nouveau contact à votre CRM
+          </DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="first_name">Prénom *</Label>
+              <Input
+                id="first_name"
+                type="text"
+                value={first_name}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="last_name">Nom *</Label>
+              <Input
+                id="last_name"
+                type="text"
+                value={last_name}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+              />
+            </div>
+          </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="first_name" className="block text-sm font-medium">
-              Prénom *
-            </label>
-            <input
-              id="first_name"
-              type="text"
-              value={first_name}
-              onChange={(e) => setFirstName(e.target.value)}
-              required
-              className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-500"
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <div>
-            <label htmlFor="last_name" className="block text-sm font-medium">
-              Nom *
-            </label>
-            <input
-              id="last_name"
-              type="text"
-              value={last_name}
-              onChange={(e) => setLastName(e.target.value)}
-              required
-              className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-500"
+
+          <div className="space-y-2">
+            <Label htmlFor="phone">Téléphone</Label>
+            <Input
+              id="phone"
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
             />
           </div>
-        </div>
 
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium">
-            Email
-          </label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-500"
-          />
-        </div>
+          <div className="space-y-2">
+            <Label htmlFor="role">Rôle</Label>
+            <Input
+              id="role"
+              type="text"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+            />
+          </div>
 
-        <div>
-          <label htmlFor="phone" className="block text-sm font-medium">
-            Téléphone
-          </label>
-          <input
-            id="phone"
-            type="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-500"
-          />
-        </div>
+          <div className="space-y-2">
+            <Label htmlFor="company_id">Entreprise</Label>
+            <select
+              id="company_id"
+              value={company_id}
+              onChange={(e) => setCompanyId(e.target.value)}
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              <option value="">Aucune</option>
+              {companies.map((company) => (
+                <option key={company.id} value={company.id}>
+                  {company.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <div>
-          <label htmlFor="role" className="block text-sm font-medium">
-            Rôle
-          </label>
-          <input
-            id="role"
-            type="text"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-500"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="company_id" className="block text-sm font-medium">
-            Entreprise
-          </label>
-          <select
-            id="company_id"
-            value={company_id}
-            onChange={(e) => setCompanyId(e.target.value)}
-            className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-500"
-          >
-            <option value="">Aucune</option>
-            {companies.map((company) => (
-              <option key={company.id} value={company.id}>
-                {company.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="flex justify-end gap-2">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium hover:bg-neutral-50"
-          >
-            Annuler
-          </button>
-          <button
-            type="submit"
-            disabled={loading}
-            className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800 disabled:opacity-50"
-          >
-            {loading ? 'Création...' : 'Créer'}
-          </button>
-        </div>
-      </form>
-    </Modal>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              Annuler
+            </Button>
+            <Button type="submit" disabled={loading}>
+              {loading ? 'Création...' : 'Créer'}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
 

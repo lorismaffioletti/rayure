@@ -1,15 +1,14 @@
 import { Suspense } from 'react';
-import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import { getContacts } from '@/lib/supabase/queries/contacts';
 import { getCompanies } from '@/lib/supabase/queries/companies';
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 import { PageHeader } from '@/components/ui/page-header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { LoadingSkeleton } from '@/components/ui/loading-skeleton';
 import { ContactsList } from '@/components/crm/contacts-list';
 import { CompanyFilter } from '@/components/crm/company-filter';
+import { CreateContactModal } from '@/components/crm/create-contact-modal';
 
 interface ContactsPageProps {
   searchParams: Promise<{ companyId?: string; search?: string }>;
@@ -29,12 +28,12 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
         description="Gérez vos contacts et leurs interactions"
         breadcrumbs={[{ label: 'Dashboard', href: '/' }, { label: 'Contacts' }]}
         actions={
-          <Button asChild>
-            <Link href="/crm/contacts?create=true">
+          <CreateContactModal companies={companies}>
+            <Button>
               <Plus className="h-4 w-4 mr-2" />
               Nouveau contact
-            </Link>
-          </Button>
+            </Button>
+          </CreateContactModal>
         }
       />
 

@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { CreateContactModal } from '@/components/crm/create-contact-modal';
 import type { Company } from '@/types/database';
 
@@ -10,27 +11,13 @@ interface CreateContactButtonProps {
 }
 
 export function CreateContactButton({ companyId, companies }: CreateContactButtonProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   return (
-    <>
-      <button
-        onClick={() => setIsModalOpen(true)}
-        className="inline-block rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800"
-      >
-        + Ajouter un contact
-      </button>
-      <CreateContactModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSuccess={() => {
-          setIsModalOpen(false);
-          window.location.reload();
-        }}
-        defaultCompanyId={companyId}
-        companies={companies}
-      />
-    </>
+    <CreateContactModal defaultCompanyId={companyId} companies={companies}>
+      <Button size="sm">
+        <Plus className="h-4 w-4 mr-2" />
+        Ajouter un contact
+      </Button>
+    </CreateContactModal>
   );
 }
 
