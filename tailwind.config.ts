@@ -36,9 +36,29 @@ const config: Config = {
           DEFAULT: 'hsl(var(--accent))',
           foreground: 'hsl(var(--accent-foreground))',
         },
+        amber: {
+          DEFAULT: 'hsl(var(--amber))',
+          foreground: 'hsl(var(--amber-foreground))',
+        },
+        blue: {
+          DEFAULT: 'hsl(var(--blue))',
+          foreground: 'hsl(var(--blue-foreground))',
+        },
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
+        },
+        success: {
+          DEFAULT: 'hsl(var(--success))',
+          foreground: 'hsl(var(--success-foreground))',
+        },
+        warning: {
+          DEFAULT: 'hsl(var(--warning))',
+          foreground: 'hsl(var(--warning-foreground))',
+        },
+        info: {
+          DEFAULT: 'hsl(var(--info))',
+          foreground: 'hsl(var(--info-foreground))',
         },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
@@ -48,6 +68,12 @@ const config: Config = {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+      },
+      boxShadow: {
+        soft: '0 2px 8px rgba(0, 0, 0, 0.04)',
+        medium: '0 4px 16px rgba(0, 0, 0, 0.08)',
+        purple: '0 4px 16px rgba(99, 102, 241, 0.2)',
+        'purple-lg': '0 8px 24px rgba(99, 102, 241, 0.3)',
       },
     },
   },
