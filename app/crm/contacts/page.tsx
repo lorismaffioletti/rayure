@@ -1,8 +1,13 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
+import { Plus } from 'lucide-react';
 import { getContacts } from '@/lib/supabase/queries/contacts';
 import { getCompanies } from '@/lib/supabase/queries/companies';
-import { Table, TableHeader, TableRow, TableHead, TableCell } from '@/components/ui/table';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
+import { PageHeader } from '@/components/ui/page-header';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { LoadingSkeleton } from '@/components/ui/loading-skeleton';
 import { ContactsList } from '@/components/crm/contacts-list';
 import { CompanyFilter } from '@/components/crm/company-filter';
 
@@ -18,28 +23,27 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
   const companies = await getCompanies();
 
   return (
-    <div className="mx-auto max-w-6xl p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Contacts</h1>
-          <p className="mt-1 text-sm text-neutral-600">
-            Gérez vos contacts et leurs interactions
-          </p>
-        </div>
-        <Link
-          href="/crm/contacts?create=true"
-          className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800"
-        >
-          + Nouveau contact
-        </Link>
-      </div>
+    <div className="page">
+      <PageHeader
+        title="Contacts"
+        description="Gérez vos contacts et leurs interactions"
+        breadcrumbs={[{ label: 'Dashboard', href: '/' }, { label: 'Contacts' }]}
+        actions={
+          <Button asChild>
+            <Link href="/crm/contacts?create=true">
+              <Plus className="h-4 w-4 mr-2" />
+              Nouveau contact
+            </Link>
+          </Button>
+        }
+      />
 
       <div className="mb-4 flex flex-col gap-4 sm:flex-row">
         <CompanyFilter companies={companies} currentCompanyId={companyId} />
         <ContactSearch initialSearch={search} />
       </div>
 
-      <Suspense fallback={<div className="py-8 text-center text-neutral-500">Chargement...</div>}>
+      <Suspense fallback={<LoadingSkeleton type="table" />}>
         <ContactsList companyId={companyId} search={search} />
       </Suspense>
     </div>
@@ -50,12 +54,11 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
 function ContactSearch({ initialSearch }: { initialSearch?: string }) {
   return (
     <form method="get" action="/crm/contacts" className="flex-1">
-      <input
+      <Input
         type="search"
         name="search"
         defaultValue={initialSearch}
         placeholder="Rechercher un contact..."
-        className="w-full rounded-md border border-neutral-300 px-3 py-1.5 text-sm focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-500"
       />
     </form>
   );

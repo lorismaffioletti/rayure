@@ -1,6 +1,6 @@
 import '../styles/globals.css';
 import type { Metadata } from 'next';
-import { BottomNav } from '@/components/bottom-nav';
+import { AppShell } from '@/components/layout/app-shell';
 
 export const metadata: Metadata = {
   title: 'Rayure',
@@ -9,13 +9,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr">
-      <body
-        className="min-h-dvh bg-white text-neutral-900 antialiased"
-        suppressHydrationWarning
-      >
-        <main className="pb-16">{children}</main>
-        <BottomNav />
+    <html lang="fr" suppressHydrationWarning>
+      <body className="min-h-screen bg-background font-sans antialiased" suppressHydrationWarning>
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );

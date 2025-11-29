@@ -1,6 +1,8 @@
 import Link from 'next/link';
+import { Users } from 'lucide-react';
 import { getContacts } from '@/lib/supabase/queries/contacts';
-import { Table, TableHeader, TableRow, TableHead, TableCell } from '@/components/ui/table';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
+import { EmptyState } from '@/components/ui/empty-state';
 
 interface ContactsListProps {
   companyId?: string;
@@ -12,14 +14,16 @@ export async function ContactsList({ companyId, search }: ContactsListProps) {
 
   if (contacts.length === 0) {
     return (
-      <div className="rounded-lg border border-neutral-200 bg-white p-8 text-center">
-        <p className="text-neutral-500">Aucun contact trouvé</p>
-      </div>
+      <EmptyState
+        icon={<Users className="h-12 w-12" />}
+        title="Aucun contact trouvé"
+        description="Commencez par créer votre premier contact"
+      />
     );
   }
 
   return (
-    <div className="rounded-lg border border-neutral-200 bg-white">
+    <div className="rounded-lg border">
       <Table>
         <TableHeader>
           <TableRow>
@@ -29,29 +33,29 @@ export async function ContactsList({ companyId, search }: ContactsListProps) {
             <TableHead className="hidden md:table-cell">Entreprise</TableHead>
           </TableRow>
         </TableHeader>
-        <tbody>
+        <TableBody>
           {contacts.map((contact) => (
-            <TableRow key={contact.id} className="hover:bg-neutral-50">
+            <TableRow key={contact.id}>
               <TableCell>
                 <Link
                   href={`/crm/contacts/${contact.id}`}
-                  className="font-medium text-neutral-900 hover:underline"
+                  className="font-medium hover:underline"
                 >
                   {contact.first_name} {contact.last_name}
                 </Link>
               </TableCell>
-              <TableCell className="hidden text-neutral-600 sm:table-cell">
+              <TableCell className="hidden text-muted-foreground sm:table-cell">
                 {contact.email || '-'}
               </TableCell>
-              <TableCell className="hidden text-neutral-600 sm:table-cell">
+              <TableCell className="hidden text-muted-foreground sm:table-cell">
                 {contact.phone || '-'}
               </TableCell>
-              <TableCell className="hidden text-neutral-600 md:table-cell">
+              <TableCell className="hidden text-muted-foreground md:table-cell">
                 {contact.company?.name || '-'}
               </TableCell>
             </TableRow>
           ))}
-        </tbody>
+        </TableBody>
       </Table>
     </div>
   );

@@ -1,18 +1,22 @@
 import { Suspense } from 'react';
+import { Calendar } from 'lucide-react';
 import { getEvents } from '@/lib/supabase/queries/events';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { PageHeader } from '@/components/ui/page-header';
+import { Badge } from '@/components/ui/badge';
+import { EmptyState } from '@/components/ui/empty-state';
+import { LoadingSkeleton } from '@/components/ui/loading-skeleton';
 
 export default async function EventsPage() {
   return (
-    <div className="mx-auto max-w-6xl p-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">Événements</h1>
-        <p className="mt-1 text-sm text-neutral-600">
-          Gestion des événements et pipeline d'opportunités
-        </p>
-      </div>
+    <div className="page">
+      <PageHeader
+        title="Événements"
+        description="Gestion des événements et pipeline d'opportunités"
+        breadcrumbs={[{ label: 'Dashboard', href: '/' }, { label: 'Événements' }]}
+      />
 
-      <Suspense fallback={<div className="py-8 text-center text-neutral-500">Chargement...</div>}>
+      <Suspense fallback={<LoadingSkeleton type="grid" />}>
         <EventsList />
       </Suspense>
     </div>
@@ -24,11 +28,11 @@ async function EventsList() {
 
   if (events.length === 0) {
     return (
-      <Card>
-        <CardContent className="py-8 text-center">
-          <p className="text-neutral-500">Aucun événement enregistré</p>
-        </CardContent>
-      </Card>
+      <EmptyState
+        icon={<Calendar className="h-12 w-12" />}
+        title="Aucun événement enregistré"
+        description="Commencez par créer votre premier événement"
+      />
     );
   }
 
@@ -42,20 +46,18 @@ async function EventsList() {
           <CardContent>
             <div className="space-y-2 text-sm">
               {event.location && (
-                <div className="text-neutral-600">📍 {event.location}</div>
+                <div className="text-muted-foreground">📍 {event.location}</div>
               )}
               {event.date && (
-                <div className="text-neutral-600">
+                <div className="text-muted-foreground">
                   📅 {new Date(event.date).toLocaleDateString('fr-FR')}
                 </div>
               )}
               <div>
-                <span className="rounded-full bg-neutral-100 px-2 py-1 text-xs">
-                  {event.status}
-                </span>
+                <Badge variant="outline">{event.status}</Badge>
               </div>
               {event.ca_ht && (
-                <div className="font-medium text-neutral-900">
+                <div className="font-medium">
                   CA HT: {event.ca_ht.toLocaleString('fr-FR')} €
                 </div>
               )}

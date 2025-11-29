@@ -1,7 +1,14 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
+import { Plus } from 'lucide-react';
 import { getCompanies } from '@/lib/supabase/queries/companies';
-import { Table, TableHeader, TableRow, TableHead, TableCell } from '@/components/ui/table';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
+import { PageHeader } from '@/components/ui/page-header';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { EmptyState } from '@/components/ui/empty-state';
+import { LoadingSkeleton } from '@/components/ui/loading-skeleton';
 import { CreateCompanyModal } from '@/components/crm/create-company-modal';
 import { CompaniesList } from '@/components/crm/companies-list';
 import type { CompanyType } from '@/types/database';
@@ -23,23 +30,20 @@ export default async function CompaniesPage({ searchParams }: CompaniesPageProps
   const search = params.search;
 
   return (
-    <div className="mx-auto max-w-6xl p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Entreprises</h1>
-          <p className="mt-1 text-sm text-neutral-600">
-            Gérez vos entreprises et clients
-          </p>
-        </div>
-        <CreateCompanyButton />
-      </div>
+    <div className="page">
+      <PageHeader
+        title="Entreprises"
+        description="Gérez vos entreprises et clients"
+        breadcrumbs={[{ label: 'Dashboard', href: '/' }, { label: 'Entreprises' }]}
+        actions={<CreateCompanyButton />}
+      />
 
       <div className="mb-4 flex flex-col gap-4 sm:flex-row">
         <CompanyTypeFilter currentType={type} />
         <CompanySearch initialSearch={search} />
       </div>
 
-      <Suspense fallback={<div className="py-8 text-center text-neutral-500">Chargement...</div>}>
+      <Suspense fallback={<LoadingSkeleton type="table" />}>
         <CompaniesList type={type} search={search} />
       </Suspense>
     </div>
@@ -48,42 +52,34 @@ export default async function CompaniesPage({ searchParams }: CompaniesPageProps
 
 function CreateCompanyButton() {
   return (
-    <div className="flex items-center gap-2">
-      <Link
-        href="/crm/companies?create=true"
-        className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800"
-      >
-        + Nouvelle entreprise
-      </Link>
-    </div>
+    <CreateCompanyModal>
+      <Button>
+        <Plus className="h-4 w-4 mr-2" />
+        Nouvelle entreprise
+      </Button>
+    </CreateCompanyModal>
   );
 }
 
 function CompanyTypeFilter({ currentType }: { currentType?: CompanyType }) {
   return (
     <div className="flex gap-2">
-      <Link
-        href="/crm/companies"
-        className={`rounded-md px-3 py-1.5 text-sm ${
-          !currentType
-            ? 'bg-neutral-900 text-white'
-            : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
-        }`}
+      <Button
+        asChild
+        variant={!currentType ? 'default' : 'outline'}
+        size="sm"
       >
-        Tous
-      </Link>
+        <Link href="/crm/companies">Tous</Link>
+      </Button>
       {Object.entries(COMPANY_TYPE_LABELS).map(([value, label]) => (
-        <Link
+        <Button
           key={value}
-          href={`/crm/companies?type=${value}`}
-          className={`rounded-md px-3 py-1.5 text-sm ${
-            currentType === value
-              ? 'bg-neutral-900 text-white'
-              : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
-          }`}
+          asChild
+          variant={currentType === value ? 'default' : 'outline'}
+          size="sm"
         >
-          {label}
-        </Link>
+          <Link href={`/crm/companies?type=${value}`}>{label}</Link>
+        </Button>
       ))}
     </div>
   );
@@ -92,12 +88,11 @@ function CompanyTypeFilter({ currentType }: { currentType?: CompanyType }) {
 function CompanySearch({ initialSearch }: { initialSearch?: string }) {
   return (
     <form method="get" action="/crm/companies" className="flex-1">
-      <input
+      <Input
         type="search"
         name="search"
         defaultValue={initialSearch}
         placeholder="Rechercher une entreprise..."
-        className="w-full rounded-md border border-neutral-300 px-3 py-1.5 text-sm focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-500"
       />
     </form>
   );

@@ -1,14 +1,25 @@
 'use client';
 
 import { useState } from 'react';
-import { Modal } from '@/components/ui/modal';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { createCompany } from '@/app/actions/companies';
+import { toast } from 'sonner';
 import type { CompanyType } from '@/types/database';
+import type { ReactNode } from 'react';
 
 interface CreateCompanyModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSuccess: () => void;
+  children: ReactNode;
 }
 
 const COMPANY_TYPES: { value: CompanyType; label: string }[] = [
@@ -18,88 +29,80 @@ const COMPANY_TYPES: { value: CompanyType; label: string }[] = [
   { value: 'autre', label: 'Autre' },
 ];
 
-export function CreateCompanyModal({ isOpen, onClose, onSuccess }: CreateCompanyModalProps) {
+export function CreateCompanyModal({ children }: CreateCompanyModalProps) {
+  const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [type, setType] = useState<CompanyType>('autre');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
     setLoading(true);
 
     try {
       await createCompany({ name, type });
+      toast.success('Entreprise créée avec succès');
       setName('');
       setType('autre');
-      onSuccess();
-      onClose();
+      setOpen(false);
+      window.location.reload();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Une erreur est survenue');
+      toast.error(err instanceof Error ? err.message : 'Une erreur est survenue');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Créer une entreprise">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {error && (
-          <div className="rounded-md bg-red-50 p-3 text-sm text-red-800">{error}</div>
-        )}
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Créer une entreprise</DialogTitle>
+          <DialogDescription>
+            Ajoutez une nouvelle entreprise à votre CRM
+          </DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="name">Nom *</Label>
+            <Input
+              id="name"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
 
-        <div>
-          <label htmlFor="name" className="block text-sm font-medium">
-            Nom *
-          </label>
-          <input
-            id="name"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-500"
-          />
-        </div>
+          <div className="space-y-2">
+            <Label htmlFor="type">Type *</Label>
+            <select
+              id="type"
+              value={type}
+              onChange={(e) => setType(e.target.value as CompanyType)}
+              required
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              {COMPANY_TYPES.map((t) => (
+                <option key={t.value} value={t.value}>
+                  {t.label}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <div>
-          <label htmlFor="type" className="block text-sm font-medium">
-            Type *
-          </label>
-          <select
-            id="type"
-            value={type}
-            onChange={(e) => setType(e.target.value as CompanyType)}
-            required
-            className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-500"
-          >
-            {COMPANY_TYPES.map((t) => (
-              <option key={t.value} value={t.value}>
-                {t.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="flex justify-end gap-2">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium hover:bg-neutral-50"
-          >
-            Annuler
-          </button>
-          <button
-            type="submit"
-            disabled={loading}
-            className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800 disabled:opacity-50"
-          >
-            {loading ? 'Création...' : 'Créer'}
-          </button>
-        </div>
-      </form>
-    </Modal>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              Annuler
+            </Button>
+            <Button type="submit" disabled={loading}>
+              {loading ? 'Création...' : 'Créer'}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
 

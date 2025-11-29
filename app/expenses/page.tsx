@@ -1,20 +1,21 @@
 import { Suspense } from 'react';
+import { Receipt } from 'lucide-react';
 import { getExpenses } from '@/lib/supabase/queries/expenses';
-import { Table, TableHeader, TableRow, TableHead, TableCell } from '@/components/ui/table';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
+import { PageHeader } from '@/components/ui/page-header';
+import { EmptyState } from '@/components/ui/empty-state';
+import { LoadingSkeleton } from '@/components/ui/loading-skeleton';
 
 export default async function ExpensesPage() {
   return (
-    <div className="mx-auto max-w-6xl p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Notes de frais</h1>
-          <p className="mt-1 text-sm text-neutral-600">
-            Gestion des notes de frais et justificatifs
-          </p>
-        </div>
-      </div>
+    <div className="page">
+      <PageHeader
+        title="Notes de frais"
+        description="Gestion des notes de frais et justificatifs"
+        breadcrumbs={[{ label: 'Dashboard', href: '/' }, { label: 'Notes de frais' }]}
+      />
 
-      <Suspense fallback={<div className="py-8 text-center text-neutral-500">Chargement...</div>}>
+      <Suspense fallback={<LoadingSkeleton type="table" />}>
         <ExpensesList />
       </Suspense>
     </div>
@@ -26,14 +27,16 @@ async function ExpensesList() {
 
   if (expenses.length === 0) {
     return (
-      <div className="rounded-lg border border-neutral-200 bg-white p-8 text-center">
-        <p className="text-neutral-500">Aucune note de frais enregistrée</p>
-      </div>
+      <EmptyState
+        icon={<Receipt className="h-12 w-12" />}
+        title="Aucune note de frais enregistrée"
+        description="Commencez par ajouter votre première note de frais"
+      />
     );
   }
 
   return (
-    <div className="rounded-lg border border-neutral-200 bg-white">
+    <div className="rounded-lg border">
       <Table>
         <TableHeader>
           <TableRow>
@@ -42,11 +45,11 @@ async function ExpensesList() {
             <TableHead className="text-right">Montant TTC</TableHead>
           </TableRow>
         </TableHeader>
-        <tbody>
+        <TableBody>
           {expenses.map((expense) => (
-            <TableRow key={expense.id} className="hover:bg-neutral-50">
+            <TableRow key={expense.id}>
               <TableCell className="font-medium">{expense.title}</TableCell>
-              <TableCell className="hidden text-neutral-600 sm:table-cell">
+              <TableCell className="hidden text-muted-foreground sm:table-cell">
                 {new Date(expense.date).toLocaleDateString('fr-FR')}
               </TableCell>
               <TableCell className="text-right font-medium">
@@ -58,7 +61,7 @@ async function ExpensesList() {
               </TableCell>
             </TableRow>
           ))}
-        </tbody>
+        </TableBody>
       </Table>
     </div>
   );

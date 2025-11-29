@@ -1,20 +1,21 @@
 import { Suspense } from 'react';
+import { Package } from 'lucide-react';
 import { getProducts } from '@/lib/supabase/queries/products';
-import { Table, TableHeader, TableRow, TableHead, TableCell } from '@/components/ui/table';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
+import { PageHeader } from '@/components/ui/page-header';
+import { EmptyState } from '@/components/ui/empty-state';
+import { LoadingSkeleton } from '@/components/ui/loading-skeleton';
 
 export default async function ProductsPage() {
   return (
-    <div className="mx-auto max-w-6xl p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Produits</h1>
-          <p className="mt-1 text-sm text-neutral-600">
-            Catalogue des produits et historiques de prix
-          </p>
-        </div>
-      </div>
+    <div className="page">
+      <PageHeader
+        title="Produits"
+        description="Catalogue des produits et historiques de prix"
+        breadcrumbs={[{ label: 'Dashboard', href: '/' }, { label: 'Produits' }]}
+      />
 
-      <Suspense fallback={<div className="py-8 text-center text-neutral-500">Chargement...</div>}>
+      <Suspense fallback={<LoadingSkeleton type="table" />}>
         <ProductsList />
       </Suspense>
     </div>
@@ -26,14 +27,16 @@ async function ProductsList() {
 
   if (products.length === 0) {
     return (
-      <div className="rounded-lg border border-neutral-200 bg-white p-8 text-center">
-        <p className="text-neutral-500">Aucun produit enregistré</p>
-      </div>
+      <EmptyState
+        icon={<Package className="h-12 w-12" />}
+        title="Aucun produit enregistré"
+        description="Commencez par ajouter votre premier produit"
+      />
     );
   }
 
   return (
-    <div className="rounded-lg border border-neutral-200 bg-white">
+    <div className="rounded-lg border">
       <Table>
         <TableHeader>
           <TableRow>
@@ -42,19 +45,19 @@ async function ProductsList() {
             <TableHead className="hidden md:table-cell">Dernier prix</TableHead>
           </TableRow>
         </TableHeader>
-        <tbody>
+        <TableBody>
           {products.map((product) => (
-            <TableRow key={product.id} className="hover:bg-neutral-50">
+            <TableRow key={product.id}>
               <TableCell className="font-medium">{product.name}</TableCell>
-              <TableCell className="hidden text-neutral-600 sm:table-cell">
+              <TableCell className="hidden text-muted-foreground sm:table-cell">
                 {product.supplier_name || '-'}
               </TableCell>
-              <TableCell className="hidden text-neutral-600 md:table-cell">
+              <TableCell className="hidden text-muted-foreground md:table-cell">
                 {product.latest_price ? `${product.latest_price} €` : '-'}
               </TableCell>
             </TableRow>
           ))}
-        </tbody>
+        </TableBody>
       </Table>
     </div>
   );

@@ -1,18 +1,22 @@
 import { Suspense } from 'react';
+import { CheckSquare } from 'lucide-react';
 import { getTasks } from '@/lib/supabase/queries/tasks';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { PageHeader } from '@/components/ui/page-header';
+import { Badge } from '@/components/ui/badge';
+import { EmptyState } from '@/components/ui/empty-state';
+import { LoadingSkeleton } from '@/components/ui/loading-skeleton';
 
 export default async function TasksPage() {
   return (
-    <div className="mx-auto max-w-4xl p-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">Tâches</h1>
-        <p className="mt-1 text-sm text-neutral-600">
-          Gestion des tâches et to-do
-        </p>
-      </div>
+    <div className="page max-w-5xl">
+      <PageHeader
+        title="Tâches"
+        description="Gestion des tâches et to-do"
+        breadcrumbs={[{ label: 'Dashboard', href: '/' }, { label: 'Tâches' }]}
+      />
 
-      <Suspense fallback={<div className="py-8 text-center text-neutral-500">Chargement...</div>}>
+      <Suspense fallback={<LoadingSkeleton type="list" />}>
         <TasksList />
       </Suspense>
     </div>
@@ -44,17 +48,17 @@ async function TasksList() {
                       )}
                     </div>
                     <div className="flex items-center gap-2">
-                      <span
-                        className={`rounded-full px-2 py-1 text-xs ${
+                      <Badge
+                        variant={
                           task.priority === 1
-                            ? 'bg-red-100 text-red-800'
+                            ? 'destructive'
                             : task.priority === 2
-                              ? 'bg-yellow-100 text-yellow-800'
-                              : 'bg-blue-100 text-blue-800'
-                        }`}
+                              ? 'default'
+                              : 'secondary'
+                        }
                       >
                         Priorité {task.priority}
-                      </span>
+                      </Badge>
                     </div>
                   </div>
                 </CardContent>
@@ -91,11 +95,11 @@ async function TasksList() {
       )}
 
       {tasks.length === 0 && (
-        <Card>
-          <CardContent className="py-8 text-center">
-            <p className="text-neutral-500">Aucune tâche enregistrée</p>
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={<CheckSquare className="h-12 w-12" />}
+          title="Aucune tâche enregistrée"
+          description="Commencez par créer votre première tâche"
+        />
       )}
     </div>
   );
