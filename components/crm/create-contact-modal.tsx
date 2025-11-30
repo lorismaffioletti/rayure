@@ -38,6 +38,8 @@ export function CreateContactModal({
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [role, setRole] = useState('');
+  const [source, setSource] = useState('');
+  const [meeting_date, setMeetingDate] = useState('');
   const [company_id, setCompanyId] = useState<string>(defaultCompanyId || '');
   const [loading, setLoading] = useState(false);
 
@@ -61,6 +63,8 @@ export function CreateContactModal({
         email: email || undefined,
         phone: phone || undefined,
         role: role || undefined,
+        source: source || undefined,
+        meeting_date: meeting_date || undefined,
         company_id: company_id || undefined,
       });
       toast.success('Contact créé avec succès');
@@ -69,6 +73,8 @@ export function CreateContactModal({
       setEmail('');
       setPhone('');
       setRole('');
+      setSource('');
+      setMeetingDate('');
       setCompanyId(defaultCompanyId || '');
       setOpen(false);
       router.refresh();
@@ -140,6 +146,27 @@ export function CreateContactModal({
               type="text"
               value={role}
               onChange={(e) => setRole(e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="source">Source du contact</Label>
+            <Input
+              id="source"
+              type="text"
+              value={source}
+              onChange={(e) => setSource(e.target.value)}
+              placeholder="Ex: LinkedIn, Salon, Recommandation..."
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="meeting_date">Date de rencontre</Label>
+            <Input
+              id="meeting_date"
+              type="date"
+              value={meeting_date}
+              onChange={(e) => setMeetingDate(e.target.value)}
             />
           </div>
 

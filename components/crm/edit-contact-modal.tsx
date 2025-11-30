@@ -31,6 +31,10 @@ export function EditContactModal({ contact, companies, children }: EditContactMo
   const [email, setEmail] = useState(contact.email || '');
   const [phone, setPhone] = useState(contact.phone || '');
   const [role, setRole] = useState(contact.role || '');
+  const [source, setSource] = useState(contact.source || '');
+  const [meeting_date, setMeetingDate] = useState(
+    contact.meeting_date ? contact.meeting_date.split('T')[0] : ''
+  );
   const [company_id, setCompanyId] = useState<string>(contact.company_id || '');
   const [loading, setLoading] = useState(false);
 
@@ -41,6 +45,8 @@ export function EditContactModal({ contact, companies, children }: EditContactMo
       setEmail(contact.email || '');
       setPhone(contact.phone || '');
       setRole(contact.role || '');
+      setSource(contact.source || '');
+      setMeetingDate(contact.meeting_date ? contact.meeting_date.split('T')[0] : '');
       setCompanyId(contact.company_id || '');
     }
   }, [open, contact]);
@@ -56,6 +62,8 @@ export function EditContactModal({ contact, companies, children }: EditContactMo
         email: email || undefined,
         phone: phone || undefined,
         role: role || undefined,
+        source: source || undefined,
+        meeting_date: meeting_date || undefined,
         company_id: company_id || undefined,
       });
       toast.success('Contact modifié avec succès');
@@ -129,6 +137,27 @@ export function EditContactModal({ contact, companies, children }: EditContactMo
               type="text"
               value={role}
               onChange={(e) => setRole(e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="edit-source">Source du contact</Label>
+            <Input
+              id="edit-source"
+              type="text"
+              value={source}
+              onChange={(e) => setSource(e.target.value)}
+              placeholder="Ex: LinkedIn, Salon, Recommandation..."
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="edit-meeting_date">Date de rencontre</Label>
+            <Input
+              id="edit-meeting_date"
+              type="date"
+              value={meeting_date}
+              onChange={(e) => setMeetingDate(e.target.value)}
             />
           </div>
 
