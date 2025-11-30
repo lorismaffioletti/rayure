@@ -9,6 +9,14 @@ export interface CreateEventInventoryInput {
   sale_price_ht: number;
   sale_price_ttc: number;
   quantity: number;
+  inventory_start_quantity?: number;
+  inventory_end_quantity?: number;
+  inventory_start_full?: number;
+  inventory_start_opened?: number;
+  inventory_start_empty?: number;
+  inventory_end_full?: number;
+  inventory_end_opened?: number;
+  inventory_end_empty?: number;
 }
 
 export async function createEventInventory(input: CreateEventInventoryInput) {

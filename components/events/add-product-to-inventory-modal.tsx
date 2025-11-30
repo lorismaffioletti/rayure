@@ -25,6 +25,11 @@ interface AddProductToInventoryModalProps {
   products: Product[];
 }
 
+function isFutProduct(productName: string): boolean {
+  const name = productName.toLowerCase();
+  return name.includes('fut') || name.includes('barrel') || name.includes('tonneau');
+}
+
 export function AddProductToInventoryModal({
   children,
   eventId,
@@ -37,6 +42,9 @@ export function AddProductToInventoryModal({
   const [sale_price_ttc, setSalePriceTtc] = useState('');
   const [quantity, setQuantity] = useState('1');
   const [loading, setLoading] = useState(false);
+
+  const selectedProduct = products.find((p) => p.id === product_id);
+  const isFut = selectedProduct ? isFutProduct(selectedProduct.name) : false;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -137,17 +145,35 @@ export function AddProductToInventoryModal({
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="quantity">Quantité *</Label>
-            <Input
-              id="quantity"
-              type="number"
-              min="1"
-              value={quantity}
-              onChange={(e) => setQuantity(e.target.value)}
-              required
-            />
-          </div>
+          {!isFut && (
+            <div className="space-y-2">
+              <Label htmlFor="quantity">Quantité *</Label>
+              <Input
+                id="quantity"
+                type="number"
+                min="1"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+                required
+              />
+            </div>
+          )}
+
+          {isFut && (
+            <div className="space-y-2">
+              <Label>Quantité (pour référence)</Label>
+              <Input
+                type="number"
+                min="1"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+                required
+              />
+              <p className="text-xs text-muted-foreground">
+                Les états des fûts seront gérés dans l'inventaire de début/fin
+              </p>
+            </div>
+          )}
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
@@ -162,4 +188,3 @@ export function AddProductToInventoryModal({
     </Dialog>
   );
 }
-

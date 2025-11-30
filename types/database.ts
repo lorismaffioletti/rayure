@@ -163,7 +163,17 @@ export interface EventInventory {
   sale_price_ht: number;
   sale_price_ttc: number;
   quantity: number;
+  inventory_start_quantity: number | null;
+  inventory_end_quantity: number | null;
+  inventory_start_full: number | null;
+  inventory_start_opened: number | null;
+  inventory_start_empty: number | null;
+  inventory_end_full: number | null;
+  inventory_end_opened: number | null;
+  inventory_end_empty: number | null;
   created_at: string;
   product?: Product;
 }
+
+export type FutState = 'full' | 'opened' | 'empty';
 

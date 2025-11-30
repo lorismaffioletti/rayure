@@ -11,6 +11,12 @@ interface EventInventoryListProps {
   eventId: string;
 }
 
+function isFutProduct(productName: string | undefined): boolean {
+  if (!productName) return false;
+  const name = productName.toLowerCase();
+  return name.includes('fut') || name.includes('barrel') || name.includes('tonneau');
+}
+
 export function EventInventoryList({ inventory, eventId }: EventInventoryListProps) {
   if (inventory.length === 0) {
     return (
@@ -33,28 +39,56 @@ export function EventInventoryList({ inventory, eventId }: EventInventoryListPro
 
   return (
     <div className="space-y-4">
-      <div className="rounded-lg border">
+      <div className="rounded-lg border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Produit</TableHead>
               <TableHead className="text-right">Prix HT</TableHead>
               <TableHead className="text-right">Prix TTC</TableHead>
-              <TableHead className="text-right">Quantité</TableHead>
-              <TableHead className="text-right">Total HT</TableHead>
-              <TableHead className="text-right">Total TTC</TableHead>
+              <TableHead className="text-center">Début</TableHead>
+              <TableHead className="text-center">Fin</TableHead>
+              <TableHead className="text-center">Total</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {inventory.map((item) => {
-              const itemTotalHt = item.sale_price_ht * item.quantity;
-              const itemTotalTtc = item.sale_price_ttc * item.quantity;
+              const isFut = isFutProduct(item.product?.name);
+              
+              // Calcul pour les fûts
+              let startTotal = 0;
+              let endTotal = 0;
+              let totalDiff = 0;
+              
+              if (isFut) {
+                const startFull = item.inventory_start_full || 0;
+                const startOpened = item.inventory_start_opened || 0;
+                const startEmpty = item.inventory_start_empty || 0;
+                startTotal = startFull + startOpened + startEmpty;
+                
+                const endFull = item.inventory_end_full || 0;
+                const endOpened = item.inventory_end_opened || 0;
+                const endEmpty = item.inventory_end_empty || 0;
+                endTotal = endFull + endOpened + endEmpty;
+                
+                totalDiff = startTotal - endTotal;
+              } else {
+                // Pour les autres produits
+                const startQty = item.inventory_start_quantity || 0;
+                const endQty = item.inventory_end_quantity || 0;
+                startTotal = startQty;
+                endTotal = endQty;
+                totalDiff = startQty - endQty;
+              }
 
               return (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">
                     {item.product?.name || 'Produit inconnu'}
+                    {isFut && (
+                      <span className="ml-2 text-xs text-muted-foreground">(Fût)</span>
+                    )}
                   </TableCell>
                   <TableCell className="text-right">
                     {item.sale_price_ht.toLocaleString('fr-FR', {
@@ -68,18 +102,34 @@ export function EventInventoryList({ inventory, eventId }: EventInventoryListPro
                       currency: 'EUR',
                     })}
                   </TableCell>
-                  <TableCell className="text-right">{item.quantity}</TableCell>
-                  <TableCell className="text-right font-medium">
-                    {itemTotalHt.toLocaleString('fr-FR', {
-                      style: 'currency',
-                      currency: 'EUR',
-                    })}
+                  <TableCell className="text-center">
+                    {isFut ? (
+                      <div className="text-xs space-y-1">
+                        <div>P: {item.inventory_start_full || 0}</div>
+                        <div>E: {item.inventory_start_opened || 0}</div>
+                        <div>V: {item.inventory_start_empty || 0}</div>
+                        <div className="font-medium pt-1 border-t">Total: {startTotal}</div>
+                      </div>
+                    ) : (
+                      <div className="text-sm">{startTotal}</div>
+                    )}
                   </TableCell>
-                  <TableCell className="text-right font-medium">
-                    {itemTotalTtc.toLocaleString('fr-FR', {
-                      style: 'currency',
-                      currency: 'EUR',
-                    })}
+                  <TableCell className="text-center">
+                    {isFut ? (
+                      <div className="text-xs space-y-1">
+                        <div>P: {item.inventory_end_full || 0}</div>
+                        <div>E: {item.inventory_end_opened || 0}</div>
+                        <div>V: {item.inventory_end_empty || 0}</div>
+                        <div className="font-medium pt-1 border-t">Total: {endTotal}</div>
+                      </div>
+                    ) : (
+                      <div className="text-sm">{endTotal}</div>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <div className={`text-sm font-medium ${totalDiff > 0 ? 'text-green-600' : totalDiff < 0 ? 'text-red-600' : ''}`}>
+                      {totalDiff > 0 ? '+' : ''}{totalDiff}
+                    </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center justify-end gap-2">
@@ -128,4 +178,3 @@ export function EventInventoryList({ inventory, eventId }: EventInventoryListPro
     </div>
   );
 }
-
