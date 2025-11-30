@@ -49,7 +49,7 @@ export function CompaniesList({ companies }: CompaniesListProps) {
               <TableCell>
                 <Link
                   href={`/crm/companies/${company.id}`}
-                  className="font-medium hover:underline"
+                  className="font-medium text-foreground hover:underline hover:text-primary"
                 >
                   {company.name}
                 </Link>
@@ -69,7 +69,7 @@ export function CompaniesList({ companies }: CompaniesListProps) {
                     </Button>
                   </EditCompanyModal>
                   <DeleteCompanyButton companyId={company.id} companyName={company.name}>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive">
+                    <Button variant="ghost" size="icon" className="h-8 w-8 !text-destructive hover:!text-destructive hover:bg-destructive/10">
                       <Trash2 className="h-4 w-4" />
                       <span className="sr-only">Supprimer</span>
                     </Button>
