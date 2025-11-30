@@ -55,20 +55,26 @@ export async function ContactInteractions({ contactId }: ContactInteractionsProp
           <h3 className="text-sm font-medium text-muted-foreground">{period}</h3>
           <div className="relative">
             {/* Timeline line */}
-            <div className="absolute left-2 top-0 bottom-0 w-0.5 bg-border" />
+            <div className="absolute left-4 top-0 bottom-0 w-[2px] bg-border" />
             
             {/* Timeline items */}
-            <div className="space-y-6 pl-8">
-              {items.map((interaction) => (
+            <div className="space-y-6 pl-10">
+              {items.map((interaction, index) => (
                 <div key={interaction.id} className="relative">
-                  {/* Timeline dot */}
-                  <div className="absolute -left-[1.625rem] top-1 h-2 w-2 rounded-full bg-border" />
+                  {/* Timeline dot with icon */}
+                  <div className="absolute -left-[2.25rem] top-0 flex h-8 w-8 items-center justify-center rounded-full border-2 border-background bg-card shadow-sm">
+                    <div className="text-muted-foreground">
+                      {getInteractionIcon(interaction)}
+                    </div>
+                  </div>
                   
                   {/* Content */}
                   <div className="space-y-1">
-                    <h4 className="font-semibold text-foreground">
-                      {formatInteractionTitle(interaction)}
-                    </h4>
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-semibold text-foreground">
+                        {formatInteractionTitle(interaction)}
+                      </h4>
+                    </div>
                     {interaction.content && (
                       <p className="text-sm text-foreground">
                         {interaction.content}
