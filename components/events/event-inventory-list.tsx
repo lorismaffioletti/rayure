@@ -8,6 +8,7 @@ import { Package } from 'lucide-react';
 import { EditEventInventoryModal } from '@/components/events/edit-event-inventory-modal';
 import { DeleteEventInventoryButton } from '@/components/events/delete-event-inventory-button';
 import type { EventInventory, Product } from '@/types/database';
+import { getProducts } from '@/lib/supabase/queries/products';
 
 interface EventInventoryListProps {
   inventory: Array<EventInventory & { product?: Product | null }>;
@@ -89,7 +90,7 @@ export function EventInventoryList({ inventory, eventId }: EventInventoryListPro
                       <EditEventInventoryModal
                         inventoryItem={item}
                         eventId={eventId}
-                        products={[]} // Not needed for edit, product is already selected
+                        products={[]}
                       >
                         <Button variant="ghost" size="icon" className="h-8 w-8">
                           <Pencil className="h-4 w-4" />
