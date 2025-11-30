@@ -12,8 +12,9 @@ create table if not exists product_deliveries (
   delivery_date date not null,
   quantity integer not null,
   purchase_price_ht numeric not null,
+  vat_rate numeric not null default 0.20,
   purchase_price_ttc numeric generated always as (
-    purchase_price_ht * (1 + coalesce((select initial_vat_rate from products where id = product_id), 0.20))
+    purchase_price_ht * (1 + vat_rate)
   ) stored,
   supplier_name text,
   invoice_number text,

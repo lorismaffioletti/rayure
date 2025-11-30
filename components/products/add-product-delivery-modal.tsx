@@ -27,6 +27,7 @@ interface AddProductDeliveryModalProps {
 export function AddProductDeliveryModal({
   children,
   productId,
+  product,
 }: AddProductDeliveryModalProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -35,6 +36,9 @@ export function AddProductDeliveryModal({
   );
   const [quantity, setQuantity] = useState('');
   const [purchase_price_ht, setPurchasePriceHt] = useState('');
+  const [vat_rate, setVatRate] = useState(
+    product?.initial_vat_rate ? (product.initial_vat_rate * 100).toString() : '20'
+  );
   const [supplier_name, setSupplierName] = useState('');
   const [invoice_number, setInvoiceNumber] = useState('');
   const [notes, setNotes] = useState('');
@@ -58,11 +62,14 @@ export function AddProductDeliveryModal({
         return;
       }
 
+      const vatRateValue = parseFloat(vat_rate) / 100;
+      
       await createProductDelivery({
         product_id: productId,
         delivery_date,
         quantity: qty,
         purchase_price_ht: priceHt,
+        vat_rate: vatRateValue,
         supplier_name: supplier_name.trim() || undefined,
         invoice_number: invoice_number.trim() || undefined,
         notes: notes.trim() || undefined,
@@ -131,6 +138,20 @@ export function AddProductDeliveryModal({
                 required
               />
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="vat_rate">Taux de TVA (%)</Label>
+            <Input
+              id="vat_rate"
+              type="number"
+              step="0.1"
+              min="0"
+              max="100"
+              value={vat_rate}
+              onChange={(e) => setVatRate(e.target.value)}
+              placeholder="20"
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-4">

@@ -36,6 +36,7 @@ export function EditProductDeliveryModal({
   const [delivery_date, setDeliveryDate] = useState(delivery.delivery_date.slice(0, 10));
   const [quantity, setQuantity] = useState(delivery.quantity.toString());
   const [purchase_price_ht, setPurchasePriceHt] = useState(delivery.purchase_price_ht.toString());
+  const [vat_rate, setVatRate] = useState((delivery.vat_rate * 100).toString());
   const [supplier_name, setSupplierName] = useState(delivery.supplier_name || '');
   const [invoice_number, setInvoiceNumber] = useState(delivery.invoice_number || '');
   const [notes, setNotes] = useState(delivery.notes || '');
@@ -46,6 +47,7 @@ export function EditProductDeliveryModal({
       setDeliveryDate(delivery.delivery_date.slice(0, 10));
       setQuantity(delivery.quantity.toString());
       setPurchasePriceHt(delivery.purchase_price_ht.toString());
+      setVatRate((delivery.vat_rate * 100).toString());
       setSupplierName(delivery.supplier_name || '');
       setInvoiceNumber(delivery.invoice_number || '');
       setNotes(delivery.notes || '');
@@ -65,10 +67,13 @@ export function EditProductDeliveryModal({
         return;
       }
 
+      const vatRateValue = parseFloat(vat_rate) / 100;
+
       await updateProductDelivery(delivery.id, productId, {
         delivery_date,
         quantity: qty,
         purchase_price_ht: priceHt,
+        vat_rate: vatRateValue,
         supplier_name: supplier_name.trim() || undefined,
         invoice_number: invoice_number.trim() || undefined,
         notes: notes.trim() || undefined,
@@ -130,6 +135,20 @@ export function EditProductDeliveryModal({
                 required
               />
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="edit-vat_rate">Taux de TVA (%)</Label>
+            <Input
+              id="edit-vat_rate"
+              type="number"
+              step="0.1"
+              min="0"
+              max="100"
+              value={vat_rate}
+              onChange={(e) => setVatRate(e.target.value)}
+              required
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-4">

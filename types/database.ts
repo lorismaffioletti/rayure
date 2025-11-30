@@ -114,6 +114,7 @@ export interface ProductDelivery {
   delivery_date: string;
   quantity: number;
   purchase_price_ht: number;
+  vat_rate: number;
   purchase_price_ttc: number;
   supplier_name: string | null;
   invoice_number: string | null;

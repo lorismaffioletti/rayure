@@ -119,7 +119,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>Historique des livraisons</CardTitle>
-              <AddProductDeliveryModal productId={id}>
+              <AddProductDeliveryModal productId={id} product={product}>
                 <Button size="sm">
                   <Plus className="h-4 w-4 mr-2" />
                   Ajouter une livraison

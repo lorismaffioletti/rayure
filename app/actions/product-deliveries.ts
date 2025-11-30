@@ -8,6 +8,7 @@ export interface CreateProductDeliveryInput {
   delivery_date: string;
   quantity: number;
   purchase_price_ht: number;
+  vat_rate?: number;
   supplier_name?: string;
   invoice_number?: string;
   notes?: string;
