@@ -25,7 +25,7 @@ export interface Contact {
   phone: string | null;
   role: string | null;
   source: string | null;
-  meeting_date: string | null;
+  relationship_start_date: string | null;
   created_at: string;
   company?: Company | null;
 }
@@ -81,7 +81,7 @@ export interface CreateContactInput {
   phone?: string;
   role?: string;
   source?: string;
-  meeting_date?: string;
+  relationship_start_date?: string;
 }
 
 export interface CreateInteractionInput {

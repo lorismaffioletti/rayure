@@ -128,11 +128,11 @@ export default async function ContactPage({ params }: ContactPageProps) {
                   <div className="text-sm text-foreground">{contact.source}</div>
                 </div>
               )}
-              {contact.meeting_date && (
+              {contact.relationship_start_date && (
                 <div>
                   <div className="text-xs font-medium text-muted-foreground">Date de rencontre</div>
                   <div className="text-sm text-foreground">
-                    {new Date(contact.meeting_date).toLocaleDateString('fr-FR', {
+                    {new Date(contact.relationship_start_date).toLocaleDateString('fr-FR', {
                       day: 'numeric',
                       month: 'long',
                       year: 'numeric',

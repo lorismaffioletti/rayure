@@ -39,7 +39,7 @@ export function CreateContactModal({
   const [phone, setPhone] = useState('');
   const [role, setRole] = useState('');
   const [source, setSource] = useState('');
-  const [meeting_date, setMeetingDate] = useState('');
+  const [relationship_start_date, setRelationshipStartDate] = useState('');
   const [company_id, setCompanyId] = useState<string>(defaultCompanyId || '');
   const [loading, setLoading] = useState(false);
 
@@ -64,7 +64,7 @@ export function CreateContactModal({
         phone: phone || undefined,
         role: role || undefined,
         source: source || undefined,
-        meeting_date: meeting_date || undefined,
+        relationship_start_date: relationship_start_date || undefined,
         company_id: company_id || undefined,
       });
       toast.success('Contact créé avec succès');
@@ -74,7 +74,7 @@ export function CreateContactModal({
       setPhone('');
       setRole('');
       setSource('');
-      setMeetingDate('');
+      setRelationshipStartDate('');
       setCompanyId(defaultCompanyId || '');
       setOpen(false);
       router.refresh();
@@ -161,12 +161,12 @@ export function CreateContactModal({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="meeting_date">Date de rencontre</Label>
+            <Label htmlFor="relationship_start_date">Date de rencontre</Label>
             <Input
-              id="meeting_date"
+              id="relationship_start_date"
               type="date"
-              value={meeting_date}
-              onChange={(e) => setMeetingDate(e.target.value)}
+              value={relationship_start_date}
+              onChange={(e) => setRelationshipStartDate(e.target.value)}
             />
           </div>
 
