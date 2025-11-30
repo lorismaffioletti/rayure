@@ -141,6 +141,7 @@ export interface Barman {
   phone: string | null;
   email: string | null;
   date_of_birth: string | null;
+  has_license: boolean;
   created_at: string;
 }
 

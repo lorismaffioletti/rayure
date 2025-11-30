@@ -34,6 +34,7 @@ export function EditBarmanModal({ barman, children }: EditBarmanModalProps) {
   const [date_of_birth, setDateOfBirth] = useState(
     barman.date_of_birth ? barman.date_of_birth.split('T')[0] : ''
   );
+  const [has_license, setHasLicense] = useState(barman.has_license);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -43,6 +44,7 @@ export function EditBarmanModal({ barman, children }: EditBarmanModalProps) {
       setPhone(barman.phone || '');
       setEmail(barman.email || '');
       setDateOfBirth(barman.date_of_birth ? barman.date_of_birth.split('T')[0] : '');
+      setHasLicense(barman.has_license);
     }
   }, [open, barman]);
 
@@ -57,6 +59,7 @@ export function EditBarmanModal({ barman, children }: EditBarmanModalProps) {
         phone: phone || undefined,
         email: email || undefined,
         date_of_birth: date_of_birth || undefined,
+        has_license,
       });
       toast.success('Barman modifié avec succès');
       setOpen(false);

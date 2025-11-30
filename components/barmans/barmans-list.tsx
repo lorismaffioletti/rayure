@@ -1,6 +1,6 @@
 'use client';
 
-import { Users, Pencil, Trash2 } from 'lucide-react';
+import { Users, Pencil, Trash2, CheckCircle2 } from 'lucide-react';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/ui/empty-state';
@@ -32,6 +32,7 @@ export function BarmansList({ barmans }: BarmansListProps) {
             <TableHead className="hidden sm:table-cell">Téléphone</TableHead>
             <TableHead className="hidden sm:table-cell">Email</TableHead>
             <TableHead className="hidden md:table-cell">Date de naissance</TableHead>
+            <TableHead className="text-center">Permis</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -51,6 +52,13 @@ export function BarmansList({ barmans }: BarmansListProps) {
                 {barman.date_of_birth
                   ? new Date(barman.date_of_birth).toLocaleDateString('fr-FR')
                   : '-'}
+              </TableCell>
+              <TableCell className="text-center">
+                {barman.has_license ? (
+                  <CheckCircle2 className="h-5 w-5 text-green-600 mx-auto" />
+                ) : (
+                  <span className="text-muted-foreground">-</span>
+                )}
               </TableCell>
               <TableCell>
                 <div className="flex items-center justify-end gap-2">

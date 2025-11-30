@@ -30,6 +30,7 @@ export function CreateBarmanModal({ children }: CreateBarmanModalProps) {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [date_of_birth, setDateOfBirth] = useState('');
+  const [has_license, setHasLicense] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -43,6 +44,7 @@ export function CreateBarmanModal({ children }: CreateBarmanModalProps) {
         phone: phone || undefined,
         email: email || undefined,
         date_of_birth: date_of_birth || undefined,
+        has_license,
       });
       toast.success('Barman créé avec succès');
       setFirstName('');
@@ -50,6 +52,7 @@ export function CreateBarmanModal({ children }: CreateBarmanModalProps) {
       setPhone('');
       setEmail('');
       setDateOfBirth('');
+      setHasLicense(false);
       setOpen(false);
       router.refresh();
     } catch (err) {

@@ -9,6 +9,7 @@ export interface CreateBarmanInput {
   phone?: string;
   email?: string;
   date_of_birth?: string;
+  has_license?: boolean;
 }
 
 export async function createBarman(input: CreateBarmanInput) {
