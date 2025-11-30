@@ -1,6 +1,8 @@
 import { getContactInteractions } from '@/lib/supabase/queries/contacts';
 import { getUser } from '@/lib/auth/get-user';
 import { groupByTimePeriod, formatDateTime } from '@/lib/utils/date';
+import { Phone, Mail, MessageSquare, Calendar } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import type { ContactInteraction } from '@/types/database';
 
 interface ContactInteractionsProps {
@@ -14,18 +16,33 @@ const INTERACTION_LABELS: Record<string, string> = {
   rdv: 'Rendez-vous',
 };
 
+const INTERACTION_ICONS: Record<string, React.ReactNode> = {
+  appel: <Phone className="h-4 w-4" />,
+  email: <Mail className="h-4 w-4" />,
+  sms: <MessageSquare className="h-4 w-4" />,
+  rdv: <Calendar className="h-4 w-4" />,
+};
+
 function formatInteractionTitle(interaction: ContactInteraction): string {
   return INTERACTION_LABELS[interaction.type] || interaction.type;
+}
+
+function getInteractionIcon(interaction: ContactInteraction): React.ReactNode {
+  return INTERACTION_ICONS[interaction.type] || <MessageSquare className="h-4 w-4" />;
 }
 
 function formatUserName(email: string | null | undefined): string {
   if (!email) return 'Utilisateur';
   const name = email.split('@')[0];
-  // Capitalize first letter of each word
-  return name
-    .split('.')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
+  // Capitalize first letter of each word and format as "Prénom Nom"
+  const parts = name.split('.');
+  if (parts.length >= 2) {
+    const firstName = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
+    const lastName = parts[1].charAt(0).toUpperCase() + parts[1].slice(1);
+    return `${firstName} ${lastName}`;
+  }
+  // Fallback: capitalize first letter
+  return name.charAt(0).toUpperCase() + name.slice(1);
 }
 
 export async function ContactInteractions({ contactId }: ContactInteractionsProps) {
