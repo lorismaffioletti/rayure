@@ -73,10 +73,10 @@ export default async function ContactPage({ params }: ContactPageProps) {
             <CardContent className="space-y-3">
               {contact.email && (
                 <div>
-                  <div className="text-xs font-medium text-neutral-500">Email</div>
+                  <div className="text-xs font-medium text-muted-foreground">Email</div>
                   <a
                     href={`mailto:${contact.email}`}
-                    className="text-sm text-neutral-900 hover:underline"
+                    className="text-sm text-foreground hover:underline"
                   >
                     {contact.email}
                   </a>
@@ -84,10 +84,10 @@ export default async function ContactPage({ params }: ContactPageProps) {
               )}
               {contact.phone && (
                 <div>
-                  <div className="text-xs font-medium text-neutral-500">Téléphone</div>
+                  <div className="text-xs font-medium text-muted-foreground">Téléphone</div>
                   <a
                     href={`tel:${contact.phone}`}
-                    className="text-sm text-neutral-900 hover:underline"
+                    className="text-sm text-foreground hover:underline"
                   >
                     {contact.phone}
                   </a>
@@ -95,10 +95,10 @@ export default async function ContactPage({ params }: ContactPageProps) {
               )}
               {contact.company && (
                 <div>
-                  <div className="text-xs font-medium text-neutral-500">Entreprise</div>
+                  <div className="text-xs font-medium text-muted-foreground">Entreprise</div>
                   <Link
                     href={`/crm/companies/${contact.company.id}`}
-                    className="text-sm text-neutral-900 hover:underline"
+                    className="text-sm text-foreground hover:underline"
                   >
                     {contact.company.name}
                   </Link>
@@ -112,8 +112,8 @@ export default async function ContactPage({ params }: ContactPageProps) {
               <CardTitle>Statistiques</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{interactions.length}</div>
-              <div className="text-sm text-neutral-600">interactions enregistrées</div>
+              <div className="text-2xl font-bold text-foreground">{interactions.length}</div>
+              <div className="text-sm text-muted-foreground">interactions enregistrées</div>
             </CardContent>
           </Card>
         </div>
