@@ -93,6 +93,24 @@ export default async function ContactPage({ params }: ContactPageProps) {
                   </a>
                 </div>
               )}
+              {contact.relationship_start_date && (
+                <div>
+                  <div className="text-xs font-medium text-muted-foreground">Début de relation</div>
+                  <div className="text-sm text-foreground">
+                    {new Date(contact.relationship_start_date).toLocaleDateString('fr-FR', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric',
+                    })}
+                  </div>
+                </div>
+              )}
+              {contact.source && (
+                <div>
+                  <div className="text-xs font-medium text-muted-foreground">Source</div>
+                  <div className="text-sm text-foreground">{contact.source}</div>
+                </div>
+              )}
             </CardContent>
           </Card>
 

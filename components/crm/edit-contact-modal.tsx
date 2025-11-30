@@ -32,6 +32,10 @@ export function EditContactModal({ contact, companies, children }: EditContactMo
   const [phone, setPhone] = useState(contact.phone || '');
   const [role, setRole] = useState(contact.role || '');
   const [company_id, setCompanyId] = useState<string>(contact.company_id || '');
+  const [relationship_start_date, setRelationshipStartDate] = useState(
+    contact.relationship_start_date ? contact.relationship_start_date.split('T')[0] : ''
+  );
+  const [source, setSource] = useState(contact.source || '');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -42,6 +46,10 @@ export function EditContactModal({ contact, companies, children }: EditContactMo
       setPhone(contact.phone || '');
       setRole(contact.role || '');
       setCompanyId(contact.company_id || '');
+      setRelationshipStartDate(
+        contact.relationship_start_date ? contact.relationship_start_date.split('T')[0] : ''
+      );
+      setSource(contact.source || '');
     }
   }, [open, contact]);
 
@@ -57,6 +65,8 @@ export function EditContactModal({ contact, companies, children }: EditContactMo
         phone: phone || undefined,
         role: role || undefined,
         company_id: company_id || undefined,
+        relationship_start_date: relationship_start_date || undefined,
+        source: source || undefined,
       });
       toast.success('Contact modifié avec succès');
       setOpen(false);
@@ -147,6 +157,27 @@ export function EditContactModal({ contact, companies, children }: EditContactMo
                 </option>
               ))}
             </select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="edit-relationship_start_date">Début de relation</Label>
+            <Input
+              id="edit-relationship_start_date"
+              type="date"
+              value={relationship_start_date}
+              onChange={(e) => setRelationshipStartDate(e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="edit-source">Source</Label>
+            <Input
+              id="edit-source"
+              type="text"
+              value={source}
+              onChange={(e) => setSource(e.target.value)}
+              placeholder="Ex: LinkedIn, Salon, Recommandation..."
+            />
           </div>
 
           <DialogFooter>
