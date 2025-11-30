@@ -1,14 +1,10 @@
-'use client';
-
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2, Package } from 'lucide-react';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/ui/empty-state';
-import { Package } from 'lucide-react';
 import { EditEventInventoryModal } from '@/components/events/edit-event-inventory-modal';
 import { DeleteEventInventoryButton } from '@/components/events/delete-event-inventory-button';
 import type { EventInventory, Product } from '@/types/database';
-import { getProducts } from '@/lib/supabase/queries/products';
 
 interface EventInventoryListProps {
   inventory: Array<EventInventory & { product?: Product | null }>;
