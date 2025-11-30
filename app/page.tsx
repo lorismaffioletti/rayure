@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
-import { TrendingUp, Building2, Calendar, CheckSquare, Euro, MapPin } from 'lucide-react';
+import { TrendingUp, Building2, Calendar, CheckSquare, Euro, MapPin, Plus } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { StatCard } from '@/components/ui/stat-card';
 import { LoadingSkeleton } from '@/components/ui/loading-skeleton';
@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { getTasks } from '@/lib/supabase/queries/tasks';
 import { getQuickLinks } from '@/lib/supabase/queries/quick-links';
+import { CreateQuickLinkModal } from '@/components/quick-links/create-quick-link-modal';
 
 export default function DashboardPage() {
   return (
@@ -23,24 +24,11 @@ export default function DashboardPage() {
 
       <div className="section">
         {/* Stats principales */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-4">
           <Suspense fallback={<LoadingSkeleton type="card" />}>
             <StatsCards />
           </Suspense>
         </div>
-
-        {/* Tâches urgentes */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Tâches urgentes</CardTitle>
-            <CardDescription>Les tâches nécessitant votre attention</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Suspense fallback={<LoadingSkeleton type="list" />}>
-              <UrgentTasks />
-            </Suspense>
-          </CardContent>
-        </Card>
 
         {/* Liens rapides */}
         <Card>
@@ -51,6 +39,19 @@ export default function DashboardPage() {
           <CardContent>
             <Suspense fallback={<LoadingSkeleton type="grid" />}>
               <QuickLinks />
+            </Suspense>
+          </CardContent>
+        </Card>
+
+        {/* Tâches urgentes */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Tâches urgentes</CardTitle>
+            <CardDescription>Les tâches nécessitant votre attention</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Suspense fallback={<LoadingSkeleton type="list" />}>
+              <UrgentTasks />
             </Suspense>
           </CardContent>
         </Card>
@@ -126,79 +127,87 @@ async function UrgentTasks() {
 async function QuickLinks() {
   const links = await getQuickLinks();
 
-  if (links.length === 0) {
-    return (
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        <Link href="/crm/companies" className="block">
-          <Card className="hover:shadow-md transition">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <Building2 className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <div className="font-medium">CRM — Entreprises</div>
-                  <div className="text-sm text-muted-foreground">Gérer les entreprises</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </Link>
-        <Link href="/crm/contacts" className="block">
-          <Card className="hover:shadow-md transition">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <MapPin className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <div className="font-medium">CRM — Contacts</div>
-                  <div className="text-sm text-muted-foreground">Gérer les contacts</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </Link>
-        <Link href="/events" className="block">
-          <Card className="hover:shadow-md transition">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <Calendar className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <div className="font-medium">Événements</div>
-                  <div className="text-sm text-muted-foreground">Pipeline d'opportunités</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </Link>
-      </div>
-    );
-  }
+  const defaultLinks = [
+    {
+      id: 'companies',
+      name: 'CRM — Entreprises',
+      url: '/crm/companies',
+      icon: <Building2 className="h-5 w-5 text-muted-foreground" />,
+      description: 'Gérer les entreprises',
+    },
+    {
+      id: 'contacts',
+      name: 'CRM — Contacts',
+      url: '/crm/contacts',
+      icon: <MapPin className="h-5 w-5 text-muted-foreground" />,
+      description: 'Gérer les contacts',
+    },
+    {
+      id: 'events',
+      name: 'Événements',
+      url: '/events',
+      icon: <Calendar className="h-5 w-5 text-muted-foreground" />,
+      description: 'Pipeline d\'opportunités',
+    },
+  ];
 
   return (
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-      {links.map((link) => (
-        <a
-          key={link.id}
-          href={link.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block"
-        >
-          <Card className="hover:shadow-md transition">
+    <div className="space-y-4">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {defaultLinks.map((link) => (
+          <Link key={link.id} href={link.url} className="block">
+            <Card className="hover:shadow-md transition">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  {link.icon}
+                  <div>
+                    <div className="font-medium">{link.name}</div>
+                    <div className="text-sm text-muted-foreground">{link.description}</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+        ))}
+        {links.map((link) => (
+          <a
+            key={link.id}
+            href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block"
+          >
+            <Card className="hover:shadow-md transition">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  {link.favicon_url ? (
+                    <img src={link.favicon_url} alt="" className="h-5 w-5" />
+                  ) : (
+                    <MapPin className="h-5 w-5 text-muted-foreground" />
+                  )}
+                  <div className="flex-1">
+                    <div className="font-medium">{link.name}</div>
+                    <div className="text-sm text-muted-foreground truncate">{link.url}</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </a>
+        ))}
+        <CreateQuickLinkModal>
+          <Card className="hover:shadow-md transition cursor-pointer border-dashed">
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                {link.favicon_url ? (
-                  <img src={link.favicon_url} alt="" className="h-5 w-5" />
-                ) : (
-                  <MapPin className="h-5 w-5 text-muted-foreground" />
-                )}
-                <div className="flex-1">
-                  <div className="font-medium">{link.name}</div>
-                  <div className="text-sm text-muted-foreground truncate">{link.url}</div>
+              <div className="flex items-center gap-3 text-muted-foreground">
+                <Plus className="h-5 w-5" />
+                <div>
+                  <div className="font-medium">Ajouter un lien</div>
+                  <div className="text-sm">Créer un nouveau lien rapide</div>
                 </div>
               </div>
             </CardContent>
           </Card>
-        </a>
-      ))}
+        </CreateQuickLinkModal>
+      </div>
     </div>
   );
 }
