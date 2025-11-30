@@ -6,11 +6,16 @@ import { Calendar } from 'lucide-react';
 export async function UpcomingEvents({ limit = 6 }: { limit?: number }) {
   const events = await getEvents();
   
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
   const upcomingEvents = events
     .filter((event) => {
       if (!event.date) return false;
       const eventDate = new Date(event.date);
-      return eventDate >= new Date();
+      eventDate.setHours(0, 0, 0, 0);
+      // Include events from today onwards
+      return eventDate >= today;
     })
     .sort((a, b) => {
       if (!a.date || !b.date) return 0;

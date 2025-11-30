@@ -8,9 +8,18 @@ interface EventsListProps {
 }
 
 export function EventsList({ events }: EventsListProps) {
-  // Filter and sort upcoming events
+  // Filter and sort upcoming events (including today)
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
   const upcomingEvents = events
-    .filter((event) => event.date && new Date(event.date) >= new Date())
+    .filter((event) => {
+      if (!event.date) return false;
+      const eventDate = new Date(event.date);
+      eventDate.setHours(0, 0, 0, 0);
+      // Include events from today onwards
+      return eventDate >= today;
+    })
     .sort((a, b) => {
       if (!a.date || !b.date) return 0;
       return new Date(a.date).getTime() - new Date(b.date).getTime();
