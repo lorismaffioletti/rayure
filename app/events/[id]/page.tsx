@@ -10,6 +10,9 @@ import { fr } from 'date-fns/locale';
 import { EditEventModal } from '@/components/events/edit-event-modal';
 import { DeleteEventButton } from '@/components/events/delete-event-button';
 import { EventStaffList } from '@/components/events/event-staff-list';
+import { EditEventInfoModal } from '@/components/events/edit-event-info-modal';
+import { EditEventCrmModal } from '@/components/events/edit-event-crm-modal';
+import { EditEventStaffModal } from '@/components/events/edit-event-staff-modal';
 import { getCompanies } from '@/lib/supabase/queries/companies';
 import { getContacts } from '@/lib/supabase/queries/contacts';
 import { getBarmans } from '@/lib/supabase/queries/barmans';
@@ -82,7 +85,15 @@ export default async function EventPage({ params }: EventPageProps) {
           {/* Informations principales */}
           <Card>
             <CardHeader>
-              <CardTitle>Informations</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle>Informations</CardTitle>
+                <EditEventInfoModal event={event}>
+                  <Button variant="ghost" size="sm">
+                    <Pencil className="h-4 w-4 mr-2" />
+                    Modifier
+                  </Button>
+                </EditEventInfoModal>
+              </div>
             </CardHeader>
             <CardContent className="space-y-4">
               {eventDate && (
@@ -161,7 +172,15 @@ export default async function EventPage({ params }: EventPageProps) {
           {/* CRM et CA */}
           <Card>
             <CardHeader>
-              <CardTitle>CRM & Chiffre d'affaires</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle>CRM & Chiffre d'affaires</CardTitle>
+                <EditEventCrmModal event={event} companies={companies} contacts={contacts}>
+                  <Button variant="ghost" size="sm">
+                    <Pencil className="h-4 w-4 mr-2" />
+                    Modifier
+                  </Button>
+                </EditEventCrmModal>
+              </div>
             </CardHeader>
             <CardContent className="space-y-4">
               {event.company && (
@@ -208,7 +227,20 @@ export default async function EventPage({ params }: EventPageProps) {
         {/* Staff */}
         <Card className="mt-6">
           <CardHeader>
-            <CardTitle>Staff ({staff.length})</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle>Staff ({staff.length})</CardTitle>
+              <EditEventStaffModal
+                eventId={id}
+                staff={staff}
+                barmans={barmans}
+                eventDate={event.date}
+              >
+                <Button variant="ghost" size="sm">
+                  <Pencil className="h-4 w-4 mr-2" />
+                  Gérer
+                </Button>
+              </EditEventStaffModal>
+            </div>
           </CardHeader>
           <CardContent>
             {staff.length === 0 ? (
