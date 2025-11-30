@@ -1,10 +1,12 @@
 import { Suspense } from 'react';
-import { Package } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { getProducts } from '@/lib/supabase/queries/products';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 import { PageHeader } from '@/components/ui/page-header';
+import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/ui/empty-state';
 import { LoadingSkeleton } from '@/components/ui/loading-skeleton';
+import { CreateProductModal } from '@/components/products/create-product-modal';
 
 export default async function ProductsPage() {
   return (
@@ -13,6 +15,14 @@ export default async function ProductsPage() {
         title="Produits"
         description="Catalogue des produits et historiques de prix"
         breadcrumbs={[{ label: 'Dashboard', href: '/' }, { label: 'Produits' }]}
+        actions={
+          <CreateProductModal>
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Ajouter un produit
+            </Button>
+          </CreateProductModal>
+        }
       />
 
       <Suspense fallback={<LoadingSkeleton type="table" />}>
