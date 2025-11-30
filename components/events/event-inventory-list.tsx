@@ -86,7 +86,6 @@ export function EventInventoryList({ inventory, eventId }: EventInventoryListPro
                       <EditEventInventoryModal
                         inventoryItem={item}
                         eventId={eventId}
-                        products={[]}
                       >
                         <Button variant="ghost" size="icon" className="h-8 w-8">
                           <Pencil className="h-4 w-4" />
