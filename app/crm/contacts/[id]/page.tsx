@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Pencil, Trash2 } from 'lucide-react';
 import { getContactById, getContactInteractions } from '@/lib/supabase/queries/contacts';
 import { getCompanies } from '@/lib/supabase/queries/companies';
+import { getUser } from '@/lib/auth/get-user';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -10,6 +11,33 @@ import { ContactInteractions } from '@/components/crm/contact-interactions';
 import { InteractionFAB } from '@/components/crm/interaction-fab';
 import { EditContactModal } from '@/components/crm/edit-contact-modal';
 import { DeleteContactButton } from '@/components/crm/delete-contact-button';
+
+function formatUserName(email: string | null | undefined): string {
+  if (!email) return 'Utilisateur';
+  const name = email.split('@')[0];
+  const parts = name.split(/[._-]/);
+  if (parts.length >= 2) {
+    const firstName = parts[0];
+    const lastName = parts.slice(1).join(' ');
+    return `${firstName.charAt(0).toUpperCase() + firstName.slice(1)} ${lastName
+      .split(' ')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ')}`;
+  }
+  return name
+    .split(/[._-]/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
+async function ContactInteractionsWrapper({ contactId }: { contactId: string }) {
+  const [interactions, user] = await Promise.all([
+    getContactInteractions(contactId),
+    getUser(),
+  ]);
+  const userName = formatUserName(user?.email);
+  return <ContactInteractions contactId={contactId} interactions={interactions} userName={userName} />;
+}
 
 interface ContactPageProps {
   params: Promise<{ id: string }>;
@@ -156,7 +184,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
             <CardTitle>Historique récent</CardTitle>
           </CardHeader>
           <CardContent>
-            <ContactInteractions contactId={id} />
+            <ContactInteractionsWrapper contactId={id} />
           </CardContent>
         </Card>
 

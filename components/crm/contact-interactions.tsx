@@ -1,11 +1,18 @@
+'use client';
+
+import { useState } from 'react';
 import { getContactInteractions } from '@/lib/supabase/queries/contacts';
 import { getUser } from '@/lib/auth/get-user';
 import { groupByTimePeriod, formatDateTime } from '@/lib/utils/date';
-import { Phone, Mail, MessageSquare, Calendar } from 'lucide-react';
+import { Phone, Mail, MessageSquare, Calendar, Pencil } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { EditInteractionModal } from '@/components/crm/edit-interaction-modal';
 import type { ContactInteraction } from '@/types/database';
 
 interface ContactInteractionsProps {
   contactId: string;
+  interactions: ContactInteraction[];
+  userName: string;
 }
 
 const INTERACTION_LABELS: Record<string, string> = {
@@ -51,11 +58,8 @@ function formatUserName(email: string | null | undefined): string {
     .join(' ');
 }
 
-export async function ContactInteractions({ contactId }: ContactInteractionsProps) {
-  const [interactions, user] = await Promise.all([
-    getContactInteractions(contactId),
-    getUser(),
-  ]);
+export function ContactInteractions({ contactId, interactions, userName }: ContactInteractionsProps) {
+  const [editingInteraction, setEditingInteraction] = useState<ContactInteraction | null>(null);
 
   if (interactions.length === 0) {
     return <p className="text-sm text-muted-foreground">Aucune interaction enregistrée</p>;
@@ -69,56 +73,73 @@ export async function ContactInteractions({ contactId }: ContactInteractionsProp
 
   // Group by time period
   const grouped = groupByTimePeriod(interactionsWithDates);
-  const userName = formatUserName(user?.email);
 
   return (
-    <div className="space-y-6">
-      {grouped.map(({ period, items }) => (
-        <div key={period} className="space-y-4">
-          <h3 className="text-sm font-medium text-muted-foreground">{period}</h3>
-          <div className="relative">
-            {/* Timeline line */}
-            <div className="absolute left-3 top-0 bottom-0 w-0.5 bg-border" />
-            
-            {/* Timeline items */}
-            <div className="space-y-6 pl-10">
-              {items.map((interaction, index) => (
-                <div key={interaction.id} className="relative">
-                  {/* Timeline dot with icon */}
-                  <div className="absolute -left-[2.125rem] top-0.5 flex h-5 w-5 items-center justify-center rounded-full border-2 border-background bg-border">
-                    <div className="text-muted-foreground">
-                      {getInteractionIcon(interaction)}
-                    </div>
-                  </div>
-                  
-                  {/* Content */}
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      {getInteractionIcon(interaction) && (
-                        <div className="text-muted-foreground">
-                          {getInteractionIcon(interaction)}
+    <>
+      <div className="space-y-6">
+        {grouped.map(({ period, items }) => (
+          <div key={period} className="space-y-4">
+            <h3 className="text-sm font-medium text-muted-foreground">{period}</h3>
+            <div className="relative">
+              {/* Timeline line */}
+              <div className="absolute left-2 top-0 bottom-0 w-0.5 bg-border" />
+              
+              {/* Timeline items */}
+              <div className="space-y-6 pl-8">
+                {items.map((interaction) => (
+                  <div key={interaction.id} className="relative">
+                    {/* Timeline dot */}
+                    <div className="absolute -left-[1.625rem] top-1 h-2 w-2 rounded-full bg-border" />
+                    
+                    {/* Content */}
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                          {getInteractionIcon(interaction) && (
+                            <div className="text-muted-foreground">
+                              {getInteractionIcon(interaction)}
+                            </div>
+                          )}
+                          <h4 className="font-semibold text-foreground">
+                            {formatInteractionTitle(interaction)}
+                          </h4>
                         </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7"
+                          onClick={() => setEditingInteraction(interaction)}
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                          <span className="sr-only">Modifier</span>
+                        </Button>
+                      </div>
+                      {interaction.content && (
+                        <p className="text-sm text-foreground">
+                          {interaction.content}
+                        </p>
                       )}
-                      <h4 className="font-semibold text-foreground">
-                        {formatInteractionTitle(interaction)}
-                      </h4>
-                    </div>
-                    {interaction.content && (
-                      <p className="text-sm text-foreground">
-                        {interaction.content}
+                      <p className="text-xs text-muted-foreground">
+                        {formatDateTime(interaction.date)} • {userName}
                       </p>
-                    )}
-                    <p className="text-xs text-muted-foreground">
-                      {formatDateTime(interaction.date)} • {userName}
-                    </p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+
+      {editingInteraction && (
+        <EditInteractionModal
+          isOpen={!!editingInteraction}
+          onClose={() => setEditingInteraction(null)}
+          onSuccess={() => setEditingInteraction(null)}
+          interaction={editingInteraction}
+        />
+      )}
+    </>
   );
 }
 
