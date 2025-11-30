@@ -10,6 +10,7 @@ import {
   Package,
   Receipt,
   CheckSquare,
+  UserCog,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -18,6 +19,7 @@ const navItems = [
   { href: '/crm/companies', label: 'CRM', icon: Building2 },
   { href: '/crm/contacts', label: 'Contacts', icon: Users },
   { href: '/events', label: 'Événements', icon: Calendar },
+  { href: '/barmans', label: 'Barmans', icon: UserCog },
   { href: '/products', label: 'Produits', icon: Package },
   { href: '/expenses', label: 'Notes de frais', icon: Receipt },
   { href: '/tasks', label: 'Tâches', icon: CheckSquare },

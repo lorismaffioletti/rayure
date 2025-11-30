@@ -53,14 +53,14 @@ export default async function EventsPage() {
         title="Événements"
         description="Gestion des événements et pipeline d'opportunités"
         breadcrumbs={[{ label: 'Dashboard', href: '/' }, { label: 'Événements' }]}
-        actions={
-          <CreateEventModal companies={companies} contacts={contacts}>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Nouvel événement
-            </Button>
-          </CreateEventModal>
-        }
+            actions={
+              <CreateEventModal companies={companies} contacts={contacts} barmans={barmans}>
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Nouvel événement
+                </Button>
+              </CreateEventModal>
+            }
       />
 
       <Suspense fallback={<LoadingSkeleton type="grid" />}>

@@ -128,3 +128,24 @@ export interface Task {
   done_at: string | null;
 }
 
+export interface Barman {
+  id: string;
+  first_name: string;
+  last_name: string;
+  phone: string | null;
+  email: string | null;
+  date_of_birth: string | null;
+  created_at: string;
+}
+
+export interface EventStaff {
+  id: string;
+  event_id: string;
+  barman_id: string;
+  start_time: string;
+  end_time: string;
+  hours_worked: number;
+  created_at: string;
+  barman?: Barman;
+}
+
