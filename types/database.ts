@@ -156,3 +156,14 @@ export interface EventStaff {
   barman?: Barman;
 }
 
+export interface EventInventory {
+  id: string;
+  event_id: string;
+  product_id: string;
+  sale_price_ht: number;
+  sale_price_ttc: number;
+  quantity: number;
+  created_at: string;
+  product?: Product;
+}
+
