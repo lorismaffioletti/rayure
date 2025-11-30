@@ -120,7 +120,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
 
         <Card className="mt-6">
           <CardHeader>
-            <CardTitle>Timeline des interactions</CardTitle>
+            <CardTitle>Historique récent</CardTitle>
           </CardHeader>
           <CardContent>
             <ContactInteractions contactId={id} />
