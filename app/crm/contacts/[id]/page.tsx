@@ -1,10 +1,14 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { Pencil, Trash2 } from 'lucide-react';
 import { getContactById, getContactInteractions } from '@/lib/supabase/queries/contacts';
+import { getCompanies } from '@/lib/supabase/queries/companies';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { FAB } from '@/components/ui/fab';
+import { Button } from '@/components/ui/button';
 import { ContactInteractions } from '@/components/crm/contact-interactions';
 import { InteractionFAB } from '@/components/crm/interaction-fab';
+import { EditContactModal } from '@/components/crm/edit-contact-modal';
+import { DeleteContactButton } from '@/components/crm/delete-contact-button';
 
 interface ContactPageProps {
   params: Promise<{ id: string }>;

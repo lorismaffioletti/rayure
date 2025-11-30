@@ -14,6 +14,7 @@ interface ContactsListProps {
   companies: Company[];
 }
 
+export function ContactsList({ contacts, companies }: ContactsListProps) {
   if (contacts.length === 0) {
     return (
       <EmptyState
@@ -23,8 +24,6 @@ interface ContactsListProps {
       />
     );
   }
-
-export function ContactsList({ contacts, companies }: ContactsListProps) {
   return (
     <div className="rounded-lg border">
       <Table>
