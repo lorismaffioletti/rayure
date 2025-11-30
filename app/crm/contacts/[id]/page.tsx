@@ -21,24 +21,44 @@ export default async function ContactPage({ params }: ContactPageProps) {
   const { id } = await params;
 
   try {
-    const [contact, interactions] = await Promise.all([
+    const [contact, interactions, companies] = await Promise.all([
       getContactById(id),
       getContactInteractions(id),
+      getCompanies(),
     ]);
 
     return (
-      <div className="mx-auto max-w-4xl p-6 pb-24">
-        <div className="mb-6">
-          <Link
-            href="/crm/contacts"
-            className="text-sm text-neutral-600 hover:text-neutral-900"
-          >
-            ← Retour aux contacts
-          </Link>
-          <h1 className="mt-2 text-2xl font-bold">
-            {contact.first_name} {contact.last_name}
-          </h1>
-          {contact.role && <p className="mt-1 text-sm text-neutral-600">{contact.role}</p>}
+      <div className="page max-w-5xl pb-24">
+        <div className="mb-6 flex items-start justify-between">
+          <div>
+            <Link
+              href="/crm/contacts"
+              className="text-sm text-muted-foreground hover:text-foreground"
+            >
+              ← Retour aux contacts
+            </Link>
+            <h1 className="mt-2 text-3xl font-bold">
+              {contact.first_name} {contact.last_name}
+            </h1>
+            {contact.role && <p className="mt-1 text-sm text-muted-foreground">{contact.role}</p>}
+          </div>
+          <div className="flex items-center gap-2">
+            <EditContactModal contact={contact} companies={companies}>
+              <Button variant="outline" size="sm">
+                <Pencil className="h-4 w-4 mr-2" />
+                Modifier
+              </Button>
+            </EditContactModal>
+            <DeleteContactButton
+              contactId={contact.id}
+              contactName={`${contact.first_name} ${contact.last_name}`}
+            >
+              <Button variant="destructive" size="sm">
+                <Trash2 className="h-4 w-4 mr-2" />
+                Supprimer
+              </Button>
+            </DeleteContactButton>
+          </div>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">

@@ -1,16 +1,18 @@
+'use client';
+
 import Link from 'next/link';
-import { Users } from 'lucide-react';
-import { getContacts } from '@/lib/supabase/queries/contacts';
+import { Users, Pencil, Trash2 } from 'lucide-react';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/ui/empty-state';
+import { EditContactModal } from '@/components/crm/edit-contact-modal';
+import { DeleteContactButton } from '@/components/crm/delete-contact-button';
+import type { Contact, Company } from '@/types/database';
 
 interface ContactsListProps {
-  companyId?: string;
-  search?: string;
+  contacts: Array<Contact & { company?: Company | null }>;
+  companies: Company[];
 }
-
-export async function ContactsList({ companyId, search }: ContactsListProps) {
-  const contacts = await getContacts({ companyId, search });
 
   if (contacts.length === 0) {
     return (
@@ -22,6 +24,7 @@ export async function ContactsList({ companyId, search }: ContactsListProps) {
     );
   }
 
+export function ContactsList({ contacts, companies }: ContactsListProps) {
   return (
     <div className="rounded-lg border">
       <Table>
@@ -31,6 +34,7 @@ export async function ContactsList({ companyId, search }: ContactsListProps) {
             <TableHead className="hidden sm:table-cell">Email</TableHead>
             <TableHead className="hidden sm:table-cell">Téléphone</TableHead>
             <TableHead className="hidden md:table-cell">Entreprise</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -52,6 +56,25 @@ export async function ContactsList({ companyId, search }: ContactsListProps) {
               </TableCell>
               <TableCell className="hidden text-muted-foreground md:table-cell">
                 {contact.company?.name || '-'}
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center justify-end gap-2">
+                  <EditContactModal contact={contact} companies={companies}>
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Pencil className="h-4 w-4" />
+                      <span className="sr-only">Modifier</span>
+                    </Button>
+                  </EditContactModal>
+                  <DeleteContactButton
+                    contactId={contact.id}
+                    contactName={`${contact.first_name} ${contact.last_name}`}
+                  >
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive">
+                      <Trash2 className="h-4 w-4" />
+                      <span className="sr-only">Supprimer</span>
+                    </Button>
+                  </DeleteContactButton>
+                </div>
               </TableCell>
             </TableRow>
           ))}

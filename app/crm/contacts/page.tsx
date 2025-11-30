@@ -9,6 +9,20 @@ import { LoadingSkeleton } from '@/components/ui/loading-skeleton';
 import { ContactsList } from '@/components/crm/contacts-list';
 import { CompanyFilter } from '@/components/crm/company-filter';
 import { CreateContactModal } from '@/components/crm/create-contact-modal';
+import type { Company } from '@/types/database';
+
+async function ContactsListWrapper({
+  companyId,
+  search,
+  companies,
+}: {
+  companyId?: string;
+  search?: string;
+  companies: Company[];
+}) {
+  const contacts = await getContacts({ companyId, search });
+  return <ContactsList contacts={contacts} companies={companies} />;
+}
 
 interface ContactsPageProps {
   searchParams: Promise<{ companyId?: string; search?: string }>;
@@ -43,7 +57,7 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
       </div>
 
       <Suspense fallback={<LoadingSkeleton type="table" />}>
-        <ContactsList companyId={companyId} search={search} />
+        <ContactsListWrapper companyId={companyId} search={search} companies={companies} />
       </Suspense>
     </div>
   );
