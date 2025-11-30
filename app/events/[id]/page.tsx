@@ -13,6 +13,11 @@ import { EventStaffList } from '@/components/events/event-staff-list';
 import { EditEventInfoModal } from '@/components/events/edit-event-info-modal';
 import { EditEventCrmModal } from '@/components/events/edit-event-crm-modal';
 import { EditEventStaffModal } from '@/components/events/edit-event-staff-modal';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { EventInventoryTab } from '@/components/events/event-inventory-tab';
+import { EventCaisseTab } from '@/components/events/event-caisse-tab';
+import { EventBilanTab } from '@/components/events/event-bilan-tab';
+import { EventChargesTab } from '@/components/events/event-charges-tab';
 import { getCompanies } from '@/lib/supabase/queries/companies';
 import { getContacts } from '@/lib/supabase/queries/contacts';
 import { getBarmans } from '@/lib/supabase/queries/barmans';
@@ -264,6 +269,30 @@ export default async function EventPage({ params }: EventPageProps) {
             )}
           </CardContent>
         </Card>
+
+        {/* Onglets */}
+        <div className="mt-6">
+          <Tabs defaultValue="inventaire" className="w-full">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="inventaire">Inventaire</TabsTrigger>
+              <TabsTrigger value="caisse">Caisse</TabsTrigger>
+              <TabsTrigger value="bilan">Bilan</TabsTrigger>
+              <TabsTrigger value="charges">Charges</TabsTrigger>
+            </TabsList>
+            <TabsContent value="inventaire" className="mt-4">
+              <EventInventoryTab event={event} />
+            </TabsContent>
+            <TabsContent value="caisse" className="mt-4">
+              <EventCaisseTab event={event} />
+            </TabsContent>
+            <TabsContent value="bilan" className="mt-4">
+              <EventBilanTab event={event} />
+            </TabsContent>
+            <TabsContent value="charges" className="mt-4">
+              <EventChargesTab event={event} />
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     );
   } catch (error) {
