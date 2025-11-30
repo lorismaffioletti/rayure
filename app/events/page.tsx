@@ -1,70 +1,71 @@
 import { Suspense } from 'react';
-import { Calendar } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { getEvents } from '@/lib/supabase/queries/events';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { getCompanies } from '@/lib/supabase/queries/companies';
+import { getContacts } from '@/lib/supabase/queries/contacts';
 import { PageHeader } from '@/components/ui/page-header';
-import { Badge } from '@/components/ui/badge';
-import { EmptyState } from '@/components/ui/empty-state';
+import { Button } from '@/components/ui/button';
 import { LoadingSkeleton } from '@/components/ui/loading-skeleton';
+import { EventsCalendar } from '@/components/events/events-calendar';
+import { EventStats } from '@/components/events/event-stats';
+import { EventsList } from '@/components/events/events-list';
+import { CreateEventModal } from '@/components/events/create-event-modal';
+
+async function EventsContent() {
+  const [events, companies, contacts] = await Promise.all([
+    getEvents(),
+    getCompanies(),
+    getContacts(),
+  ]);
+
+  return (
+    <div className="grid gap-6 lg:grid-cols-2">
+      {/* Colonne gauche : Calendrier */}
+      <div>
+        <EventsCalendar events={events} />
+      </div>
+
+      {/* Colonne droite : Stats + Liste des événements */}
+      <div className="space-y-6">
+        <div>
+          <h3 className="text-lg font-semibold mb-4">Statistiques</h3>
+          <EventStats events={events} />
+        </div>
+
+        <div>
+          <h3 className="text-lg font-semibold mb-4">Événements à venir</h3>
+          <EventsList events={events} />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default async function EventsPage() {
+  const [companies, contacts] = await Promise.all([
+    getCompanies(),
+    getContacts(),
+  ]);
+
   return (
     <div className="page">
       <PageHeader
         title="Événements"
         description="Gestion des événements et pipeline d'opportunités"
         breadcrumbs={[{ label: 'Dashboard', href: '/' }, { label: 'Événements' }]}
+        actions={
+          <CreateEventModal companies={companies} contacts={contacts}>
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Nouvel événement
+            </Button>
+          </CreateEventModal>
+        }
       />
 
       <Suspense fallback={<LoadingSkeleton type="grid" />}>
-        <EventsList />
+        <EventsContent />
       </Suspense>
-    </div>
-  );
-}
-
-async function EventsList() {
-  const events = await getEvents();
-
-  if (events.length === 0) {
-    return (
-      <EmptyState
-        icon={<Calendar className="h-12 w-12" />}
-        title="Aucun événement enregistré"
-        description="Commencez par créer votre premier événement"
-      />
-    );
-  }
-
-  return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {events.map((event) => (
-        <Card key={event.id} className="hover:shadow-md transition">
-          <CardHeader>
-            <CardTitle className="text-lg">{event.title}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2 text-sm">
-              {event.location && (
-                <div className="text-muted-foreground">📍 {event.location}</div>
-              )}
-              {event.date && (
-                <div className="text-muted-foreground">
-                  📅 {new Date(event.date).toLocaleDateString('fr-FR')}
-                </div>
-              )}
-              <div>
-                <Badge variant="outline">{event.status}</Badge>
-              </div>
-              {event.ca_ht && (
-                <div className="font-medium">
-                  CA HT: {event.ca_ht.toLocaleString('fr-FR')} €
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      ))}
     </div>
   );
 }
