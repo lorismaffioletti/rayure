@@ -1,4 +1,5 @@
 import { getContactInteractions } from '@/lib/supabase/queries/contacts';
+import { getUser } from '@/lib/auth/get-user';
 import { groupByTimePeriod, formatDateTime } from '@/lib/utils/date';
 import type { ContactInteraction } from '@/types/database';
 
@@ -17,8 +18,21 @@ function formatInteractionTitle(interaction: ContactInteraction): string {
   return INTERACTION_LABELS[interaction.type] || interaction.type;
 }
 
+function formatUserName(email: string | null | undefined): string {
+  if (!email) return 'Utilisateur';
+  const name = email.split('@')[0];
+  // Capitalize first letter of each word
+  return name
+    .split('.')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
 export async function ContactInteractions({ contactId }: ContactInteractionsProps) {
-  const interactions = await getContactInteractions(contactId);
+  const [interactions, user] = await Promise.all([
+    getContactInteractions(contactId),
+    getUser(),
+  ]);
 
   if (interactions.length === 0) {
     return <p className="text-sm text-muted-foreground">Aucune interaction enregistrée</p>;
@@ -32,6 +46,7 @@ export async function ContactInteractions({ contactId }: ContactInteractionsProp
 
   // Group by time period
   const grouped = groupByTimePeriod(interactionsWithDates);
+  const userName = formatUserName(user?.email);
 
   return (
     <div className="space-y-6">
@@ -60,7 +75,7 @@ export async function ContactInteractions({ contactId }: ContactInteractionsProp
                       </p>
                     )}
                     <p className="text-xs text-muted-foreground">
-                      {formatDateTime(interaction.date)} • Loris Maffioletti
+                      {formatDateTime(interaction.date)} • {userName}
                     </p>
                   </div>
                 </div>
