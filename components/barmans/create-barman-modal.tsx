@@ -126,6 +126,19 @@ export function CreateBarmanModal({ children }: CreateBarmanModalProps) {
             />
           </div>
 
+          <div className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              id="has_license"
+              checked={has_license}
+              onChange={(e) => setHasLicense(e.target.checked)}
+              className="h-4 w-4 rounded border-input text-primary focus:ring-2 focus:ring-ring"
+            />
+            <Label htmlFor="has_license" className="text-sm font-normal cursor-pointer">
+              Permis
+            </Label>
+          </div>
+
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Annuler
