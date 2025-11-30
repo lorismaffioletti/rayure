@@ -5,6 +5,7 @@ import { getContactById, getContactInteractions } from '@/lib/supabase/queries/c
 import { getCompanies } from '@/lib/supabase/queries/companies';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { ContactInteractions } from '@/components/crm/contact-interactions';
 import { InteractionFAB } from '@/components/crm/interaction-fab';
 import { EditContactModal } from '@/components/crm/edit-contact-modal';
@@ -98,36 +99,37 @@ export default async function ContactPage({ params }: ContactPageProps) {
 
           <Card>
             <CardHeader>
-              <CardTitle>L'entreprise</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
               {contact.company ? (
-                <>
-                  <div>
-                    <div className="text-xs font-medium text-muted-foreground">Nom</div>
+                <div className="flex items-center gap-2">
+                  <CardTitle asChild>
                     <Link
                       href={`/crm/companies/${contact.company.id}`}
-                      className="text-sm font-medium text-foreground hover:underline"
+                      className="hover:underline"
                     >
                       {contact.company.name}
                     </Link>
-                  </div>
-                  <div>
-                    <div className="text-xs font-medium text-muted-foreground">Type</div>
-                    <div className="text-sm text-foreground">
-                      {contact.company.type === 'mairie' && 'Mairie'}
-                      {contact.company.type === 'agence' && 'Agence'}
-                      {contact.company.type === 'entreprise' && 'Entreprise'}
-                      {contact.company.type === 'autre' && 'Autre'}
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <div className="text-sm text-muted-foreground">
-                  Aucune entreprise associée
+                  </CardTitle>
+                  <Badge variant="outline">
+                    {contact.company.type === 'mairie' && 'Mairie'}
+                    {contact.company.type === 'agence' && 'Agence'}
+                    {contact.company.type === 'entreprise' && 'Entreprise'}
+                    {contact.company.type === 'autre' && 'Autre'}
+                  </Badge>
                 </div>
+              ) : (
+                <CardTitle>Aucune entreprise</CardTitle>
               )}
-            </CardContent>
+            </CardHeader>
+            {contact.company && (
+              <CardContent>
+                <Link
+                  href={`/crm/companies/${contact.company.id}`}
+                  className="text-sm text-muted-foreground hover:text-foreground hover:underline"
+                >
+                  Voir la fiche entreprise →
+                </Link>
+              </CardContent>
+            )}
           </Card>
         </div>
 
