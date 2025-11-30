@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/ui/empty-state';
 import { EditEventInventoryModal } from '@/components/events/edit-event-inventory-modal';
 import { DeleteEventInventoryButton } from '@/components/events/delete-event-inventory-button';
+import { Badge } from '@/components/ui/badge';
 import type { EventInventory, Product } from '@/types/database';
 
 interface EventInventoryListProps {
@@ -46,9 +47,26 @@ export function EventInventoryList({ inventory, eventId }: EventInventoryListPro
               <TableHead>Produit</TableHead>
               <TableHead className="text-right">Prix HT</TableHead>
               <TableHead className="text-right">Prix TTC</TableHead>
-              <TableHead className="text-center">Début</TableHead>
-              <TableHead className="text-center">Fin</TableHead>
-              <TableHead className="text-center">Total</TableHead>
+              <TableHead className="text-center min-w-[120px]">
+                <div className="space-y-1">
+                  <div className="font-semibold">Inventaire de début</div>
+                  <div className="text-xs font-normal text-muted-foreground">
+                    {inventory.some((item) => isFutProduct(item.product?.name)) && 'P / E / V'}
+                  </div>
+                </div>
+              </TableHead>
+              <TableHead className="text-center min-w-[120px]">
+                <div className="space-y-1">
+                  <div className="font-semibold">Inventaire de fin</div>
+                  <div className="text-xs font-normal text-muted-foreground">
+                    {inventory.some((item) => isFutProduct(item.product?.name)) && 'P / E / V'}
+                  </div>
+                </div>
+              </TableHead>
+              <TableHead className="text-center min-w-[80px]">
+                <div className="font-semibold">Total</div>
+                <div className="text-xs font-normal text-muted-foreground">(Début - Fin)</div>
+              </TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -85,10 +103,14 @@ export function EventInventoryList({ inventory, eventId }: EventInventoryListPro
               return (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">
-                    {item.product?.name || 'Produit inconnu'}
-                    {isFut && (
-                      <span className="ml-2 text-xs text-muted-foreground">(Fût)</span>
-                    )}
+                    <div className="flex items-center gap-2">
+                      <span>{item.product?.name || 'Produit inconnu'}</span>
+                      {isFut && (
+                        <Badge variant="outline" className="text-xs">
+                          Fût
+                        </Badge>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell className="text-right">
                     {item.sale_price_ht.toLocaleString('fr-FR', {
@@ -105,30 +127,61 @@ export function EventInventoryList({ inventory, eventId }: EventInventoryListPro
                   <TableCell className="text-center">
                     {isFut ? (
                       <div className="text-xs space-y-1">
-                        <div>P: {item.inventory_start_full || 0}</div>
-                        <div>E: {item.inventory_start_opened || 0}</div>
-                        <div>V: {item.inventory_start_empty || 0}</div>
-                        <div className="font-medium pt-1 border-t">Total: {startTotal}</div>
+                        <div className="flex items-center justify-center gap-2">
+                          <span className="text-muted-foreground">P:</span>
+                          <span className="font-medium">{item.inventory_start_full || 0}</span>
+                        </div>
+                        <div className="flex items-center justify-center gap-2">
+                          <span className="text-muted-foreground">E:</span>
+                          <span className="font-medium">{item.inventory_start_opened || 0}</span>
+                        </div>
+                        <div className="flex items-center justify-center gap-2">
+                          <span className="text-muted-foreground">V:</span>
+                          <span className="font-medium">{item.inventory_start_empty || 0}</span>
+                        </div>
+                        <div className="font-semibold pt-1 border-t mt-1">
+                          Total: {startTotal}
+                        </div>
                       </div>
                     ) : (
-                      <div className="text-sm">{startTotal}</div>
+                      <div className="text-sm font-medium">{startTotal}</div>
                     )}
                   </TableCell>
                   <TableCell className="text-center">
                     {isFut ? (
                       <div className="text-xs space-y-1">
-                        <div>P: {item.inventory_end_full || 0}</div>
-                        <div>E: {item.inventory_end_opened || 0}</div>
-                        <div>V: {item.inventory_end_empty || 0}</div>
-                        <div className="font-medium pt-1 border-t">Total: {endTotal}</div>
+                        <div className="flex items-center justify-center gap-2">
+                          <span className="text-muted-foreground">P:</span>
+                          <span className="font-medium">{item.inventory_end_full || 0}</span>
+                        </div>
+                        <div className="flex items-center justify-center gap-2">
+                          <span className="text-muted-foreground">E:</span>
+                          <span className="font-medium">{item.inventory_end_opened || 0}</span>
+                        </div>
+                        <div className="flex items-center justify-center gap-2">
+                          <span className="text-muted-foreground">V:</span>
+                          <span className="font-medium">{item.inventory_end_empty || 0}</span>
+                        </div>
+                        <div className="font-semibold pt-1 border-t mt-1">
+                          Total: {endTotal}
+                        </div>
                       </div>
                     ) : (
-                      <div className="text-sm">{endTotal}</div>
+                      <div className="text-sm font-medium">{endTotal}</div>
                     )}
                   </TableCell>
                   <TableCell className="text-center">
-                    <div className={`text-sm font-medium ${totalDiff > 0 ? 'text-green-600' : totalDiff < 0 ? 'text-red-600' : ''}`}>
-                      {totalDiff > 0 ? '+' : ''}{totalDiff}
+                    <div
+                      className={`text-sm font-semibold ${
+                        totalDiff > 0
+                          ? 'text-green-600 dark:text-green-400'
+                          : totalDiff < 0
+                            ? 'text-red-600 dark:text-red-400'
+                            : 'text-muted-foreground'
+                      }`}
+                    >
+                      {totalDiff > 0 ? '+' : ''}
+                      {totalDiff}
                     </div>
                   </TableCell>
                   <TableCell>
