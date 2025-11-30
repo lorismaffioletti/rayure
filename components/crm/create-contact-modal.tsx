@@ -39,8 +39,6 @@ export function CreateContactModal({
   const [phone, setPhone] = useState('');
   const [role, setRole] = useState('');
   const [company_id, setCompanyId] = useState<string>(defaultCompanyId || '');
-  const [relationship_start_date, setRelationshipStartDate] = useState('');
-  const [source, setSource] = useState('');
   const [loading, setLoading] = useState(false);
 
   // Ouvrir le modal si le paramètre create=true est présent
@@ -64,8 +62,6 @@ export function CreateContactModal({
         phone: phone || undefined,
         role: role || undefined,
         company_id: company_id || undefined,
-        relationship_start_date: relationship_start_date || undefined,
-        source: source || undefined,
       });
       toast.success('Contact créé avec succès');
       setFirstName('');
@@ -74,8 +70,6 @@ export function CreateContactModal({
       setPhone('');
       setRole('');
       setCompanyId(defaultCompanyId || '');
-      setRelationshipStartDate('');
-      setSource('');
       setOpen(false);
       router.refresh();
     } catch (err) {
@@ -164,27 +158,6 @@ export function CreateContactModal({
                 </option>
               ))}
             </select>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="relationship_start_date">Début de relation</Label>
-            <Input
-              id="relationship_start_date"
-              type="date"
-              value={relationship_start_date}
-              onChange={(e) => setRelationshipStartDate(e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="source">Source</Label>
-            <Input
-              id="source"
-              type="text"
-              value={source}
-              onChange={(e) => setSource(e.target.value)}
-              placeholder="Ex: LinkedIn, Salon, Recommandation..."
-            />
           </div>
 
           <DialogFooter>

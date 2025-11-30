@@ -5,7 +5,6 @@ import { getContactById, getContactInteractions } from '@/lib/supabase/queries/c
 import { getCompanies } from '@/lib/supabase/queries/companies';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { ContactInteractions } from '@/components/crm/contact-interactions';
 import { InteractionFAB } from '@/components/crm/interaction-fab';
 import { EditContactModal } from '@/components/crm/edit-contact-modal';
@@ -94,57 +93,41 @@ export default async function ContactPage({ params }: ContactPageProps) {
                   </a>
                 </div>
               )}
-              {contact.relationship_start_date && (
-                <div>
-                  <div className="text-xs font-medium text-muted-foreground">Début de relation</div>
-                  <div className="text-sm text-foreground">
-                    {new Date(contact.relationship_start_date).toLocaleDateString('fr-FR', {
-                      day: 'numeric',
-                      month: 'long',
-                      year: 'numeric',
-                    })}
-                  </div>
-                </div>
-              )}
-              {contact.source && (
-                <div>
-                  <div className="text-xs font-medium text-muted-foreground">Source</div>
-                  <div className="text-sm text-foreground">{contact.source}</div>
-                </div>
-              )}
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                {contact.company ? (
-                  <>
+              <CardTitle>L'entreprise</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {contact.company ? (
+                <>
+                  <div>
+                    <div className="text-xs font-medium text-muted-foreground">Nom</div>
                     <Link
                       href={`/crm/companies/${contact.company.id}`}
-                      className="hover:underline"
+                      className="text-sm font-medium text-foreground hover:underline"
                     >
                       {contact.company.name}
                     </Link>
-                    <Badge variant="outline">
+                  </div>
+                  <div>
+                    <div className="text-xs font-medium text-muted-foreground">Type</div>
+                    <div className="text-sm text-foreground">
                       {contact.company.type === 'mairie' && 'Mairie'}
                       {contact.company.type === 'agence' && 'Agence'}
                       {contact.company.type === 'entreprise' && 'Entreprise'}
                       {contact.company.type === 'autre' && 'Autre'}
-                    </Badge>
-                  </>
-                ) : (
-                  "L'entreprise"
-                )}
-              </CardTitle>
-            </CardHeader>
-            {!contact.company && (
-              <CardContent>
+                    </div>
+                  </div>
+                </>
+              ) : (
                 <div className="text-sm text-muted-foreground">
                   Aucune entreprise associée
                 </div>
-              </CardContent>
-            )}
+              )}
+            </CardContent>
           </Card>
         </div>
 
