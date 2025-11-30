@@ -22,7 +22,7 @@ export async function ContactInteractions({ contactId }: ContactInteractionsProp
   const interactions = await getContactInteractions(contactId);
 
   if (interactions.length === 0) {
-    return <p className="text-sm text-neutral-500">Aucune interaction enregistrée</p>;
+    return <p className="text-sm text-muted-foreground">Aucune interaction enregistrée</p>;
   }
 
   return (
@@ -30,20 +30,20 @@ export async function ContactInteractions({ contactId }: ContactInteractionsProp
       {interactions.map((interaction) => (
         <div
           key={interaction.id}
-          className="flex gap-4 border-l-2 border-neutral-200 pl-4"
+          className="flex gap-4 border-l-2 border-border pl-4"
         >
           <div className="text-2xl">{INTERACTION_ICONS[interaction.type] || '📝'}</div>
           <div className="flex-1">
             <div className="flex items-center gap-2">
-              <span className="font-medium">
+              <span className="font-medium text-foreground">
                 {INTERACTION_LABELS[interaction.type] || interaction.type}
               </span>
-              <span className="text-sm text-neutral-500">
+              <span className="text-sm text-muted-foreground">
                 {new Date(interaction.date).toLocaleString('fr-FR')}
               </span>
             </div>
             {interaction.content && (
-              <p className="mt-1 text-sm text-neutral-600">{interaction.content}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{interaction.content}</p>
             )}
           </div>
         </div>
