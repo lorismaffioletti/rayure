@@ -42,7 +42,7 @@ export function ContactsList({ contacts, companies }: ContactsListProps) {
               <TableCell>
                 <Link
                   href={`/crm/contacts/${contact.id}`}
-                  className="font-medium hover:underline"
+                  className="font-medium text-foreground hover:underline hover:text-primary"
                 >
                   {contact.first_name} {contact.last_name}
                 </Link>
@@ -68,7 +68,7 @@ export function ContactsList({ contacts, companies }: ContactsListProps) {
                     contactId={contact.id}
                     contactName={`${contact.first_name} ${contact.last_name}`}
                   >
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive">
+                    <Button variant="ghost" size="icon" className="h-8 w-8 !text-destructive hover:!text-destructive hover:bg-destructive/10">
                       <Trash2 className="h-4 w-4" />
                       <span className="sr-only">Supprimer</span>
                     </Button>
