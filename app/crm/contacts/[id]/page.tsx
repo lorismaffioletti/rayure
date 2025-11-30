@@ -93,27 +93,40 @@ export default async function ContactPage({ params }: ContactPageProps) {
                   </a>
                 </div>
               )}
-              {contact.company && (
-                <div>
-                  <div className="text-xs font-medium text-muted-foreground">Entreprise</div>
-                  <Link
-                    href={`/crm/companies/${contact.company.id}`}
-                    className="text-sm text-foreground hover:underline"
-                  >
-                    {contact.company.name}
-                  </Link>
-                </div>
-              )}
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>Statistiques</CardTitle>
+              <CardTitle>L'entreprise</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-foreground">{interactions.length}</div>
-              <div className="text-sm text-muted-foreground">interactions enregistrées</div>
+            <CardContent className="space-y-3">
+              {contact.company ? (
+                <>
+                  <div>
+                    <div className="text-xs font-medium text-muted-foreground">Nom</div>
+                    <Link
+                      href={`/crm/companies/${contact.company.id}`}
+                      className="text-sm font-medium text-foreground hover:underline"
+                    >
+                      {contact.company.name}
+                    </Link>
+                  </div>
+                  <div>
+                    <div className="text-xs font-medium text-muted-foreground">Type</div>
+                    <div className="text-sm text-foreground">
+                      {contact.company.type === 'mairie' && 'Mairie'}
+                      {contact.company.type === 'agence' && 'Agence'}
+                      {contact.company.type === 'entreprise' && 'Entreprise'}
+                      {contact.company.type === 'autre' && 'Autre'}
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="text-sm text-muted-foreground">
+                  Aucune entreprise associée
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
