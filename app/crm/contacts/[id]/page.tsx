@@ -116,30 +116,30 @@ export default async function ContactPage({ params }: ContactPageProps) {
 
           <Card>
             <CardHeader>
-              <CardTitle>L'entreprise</CardTitle>
+              <CardTitle>
+                {contact.company ? (
+                  <Link
+                    href={`/crm/companies/${contact.company.id}`}
+                    className="hover:underline"
+                  >
+                    {contact.company.name}
+                  </Link>
+                ) : (
+                  "L'entreprise"
+                )}
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               {contact.company ? (
-                <>
-                  <div>
-                    <div className="text-xs font-medium text-muted-foreground">Nom</div>
-                    <Link
-                      href={`/crm/companies/${contact.company.id}`}
-                      className="text-sm font-medium text-foreground hover:underline"
-                    >
-                      {contact.company.name}
-                    </Link>
+                <div>
+                  <div className="text-xs font-medium text-muted-foreground">Type</div>
+                  <div className="text-sm text-foreground">
+                    {contact.company.type === 'mairie' && 'Mairie'}
+                    {contact.company.type === 'agence' && 'Agence'}
+                    {contact.company.type === 'entreprise' && 'Entreprise'}
+                    {contact.company.type === 'autre' && 'Autre'}
                   </div>
-                  <div>
-                    <div className="text-xs font-medium text-muted-foreground">Type</div>
-                    <div className="text-sm text-foreground">
-                      {contact.company.type === 'mairie' && 'Mairie'}
-                      {contact.company.type === 'agence' && 'Agence'}
-                      {contact.company.type === 'entreprise' && 'Entreprise'}
-                      {contact.company.type === 'autre' && 'Autre'}
-                    </div>
-                  </div>
-                </>
+                </div>
               ) : (
                 <div className="text-sm text-muted-foreground">
                   Aucune entreprise associée
