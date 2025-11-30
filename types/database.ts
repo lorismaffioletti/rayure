@@ -46,6 +46,9 @@ export interface Event {
   description: string | null;
   location: string | null;
   date: string | null;
+  start_time: string | null;
+  end_time: string | null;
+  setup_time: string | null;
   assigned_company_id: string | null;
   assigned_contact_id: string | null;
   status: EventStatus;
@@ -54,6 +57,9 @@ export interface Event {
   rh_hours: number | null;
   rh_cost: number | null;
   stock_used: Record<string, unknown> | null;
+  provenance: string | null;
+  has_beer_truck: boolean | null;
+  stand_count: number | null;
   created_at: string;
   company?: Company | null;
   contact?: Contact | null;

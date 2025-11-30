@@ -3,6 +3,7 @@ import { Plus } from 'lucide-react';
 import { getEvents } from '@/lib/supabase/queries/events';
 import { getCompanies } from '@/lib/supabase/queries/companies';
 import { getContacts } from '@/lib/supabase/queries/contacts';
+import { getBarmans } from '@/lib/supabase/queries/barmans';
 import { PageHeader } from '@/components/ui/page-header';
 import { Button } from '@/components/ui/button';
 import { LoadingSkeleton } from '@/components/ui/loading-skeleton';
@@ -12,10 +13,11 @@ import { EventsList } from '@/components/events/events-list';
 import { CreateEventModal } from '@/components/events/create-event-modal';
 
 async function EventsContent() {
-  const [events, companies, contacts] = await Promise.all([
+  const [events, companies, contacts, barmans] = await Promise.all([
     getEvents(),
     getCompanies(),
     getContacts(),
+    getBarmans(),
   ]);
 
   return (
@@ -42,9 +44,10 @@ async function EventsContent() {
 }
 
 export default async function EventsPage() {
-  const [companies, contacts] = await Promise.all([
+  const [companies, contacts, barmans] = await Promise.all([
     getCompanies(),
     getContacts(),
+    getBarmans(),
   ]);
 
   return (
