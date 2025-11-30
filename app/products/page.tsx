@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
-import { Plus } from 'lucide-react';
+import { Plus, Package } from 'lucide-react';
 import { getProducts } from '@/lib/supabase/queries/products';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 import { PageHeader } from '@/components/ui/page-header';
