@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import { getProducts } from '@/lib/supabase/queries/products';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
@@ -57,8 +58,12 @@ async function ProductsList() {
         </TableHeader>
         <TableBody>
           {products.map((product) => (
-            <TableRow key={product.id}>
-              <TableCell className="font-medium">{product.name}</TableCell>
+            <TableRow key={product.id} className="cursor-pointer hover:bg-muted/50">
+              <TableCell className="font-medium">
+                <Link href={`/products/${product.id}`} className="hover:underline">
+                  {product.name}
+                </Link>
+              </TableCell>
               <TableCell className="hidden text-muted-foreground sm:table-cell">
                 {product.supplier_name || '-'}
               </TableCell>

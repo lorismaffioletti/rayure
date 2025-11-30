@@ -101,7 +101,25 @@ export interface Product {
   id: string;
   name: string;
   supplier_name: string | null;
+  initial_price_ht: number | null;
+  initial_vat_rate: number | null;
+  initial_quantity: number | null;
+  unit: string | null;
   created_at: string;
+}
+
+export interface ProductDelivery {
+  id: string;
+  product_id: string;
+  delivery_date: string;
+  quantity: number;
+  purchase_price_ht: number;
+  purchase_price_ttc: number;
+  supplier_name: string | null;
+  invoice_number: string | null;
+  notes: string | null;
+  created_at: string;
+  product?: Product | null;
 }
 
 export interface ProductPrice {

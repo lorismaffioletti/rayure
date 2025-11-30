@@ -6,6 +6,10 @@ import { revalidatePath } from 'next/cache';
 export interface CreateProductInput {
   name: string;
   supplier_name?: string;
+  initial_price_ht?: number;
+  initial_vat_rate?: number;
+  initial_quantity?: number;
+  unit?: string;
 }
 
 export async function createProduct(input: CreateProductInput) {
