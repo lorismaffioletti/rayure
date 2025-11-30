@@ -23,14 +23,13 @@ interface EditEventInventoryModalProps {
   children: ReactNode;
   inventoryItem: EventInventory & { product?: Product | null };
   eventId: string;
-  products: Product[];
+  products?: Product[]; // Optional, not used in edit mode
 }
 
 export function EditEventInventoryModal({
   children,
   inventoryItem,
   eventId,
-  products,
 }: EditEventInventoryModalProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
