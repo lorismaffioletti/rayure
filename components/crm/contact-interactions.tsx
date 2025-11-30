@@ -76,7 +76,7 @@ export async function ContactInteractions({ contactId }: ContactInteractionsProp
             
             {/* Timeline items */}
             <div className="space-y-6 pl-10">
-              {items.map((interaction, index) => (
+              {items.map((interaction) => (
                 <div key={interaction.id} className="relative">
                   {/* Timeline dot with icon */}
                   <div className="absolute -left-[2.25rem] top-0 flex h-8 w-8 items-center justify-center rounded-full border-2 border-background bg-card shadow-sm">
