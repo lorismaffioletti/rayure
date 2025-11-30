@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { getTasks } from '@/lib/supabase/queries/tasks';
 import { getQuickLinks } from '@/lib/supabase/queries/quick-links';
 import { CreateQuickLinkModal } from '@/components/quick-links/create-quick-link-modal';
+import { UpcomingEvents } from '@/components/events/upcoming-events';
 
 export default function DashboardPage() {
   return (
@@ -29,6 +30,19 @@ export default function DashboardPage() {
             <StatsCards />
           </Suspense>
         </div>
+
+        {/* Événements à venir */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Événements à venir</CardTitle>
+            <CardDescription>Vos prochains événements planifiés</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Suspense fallback={<LoadingSkeleton type="grid" />}>
+              <UpcomingEvents limit={6} />
+            </Suspense>
+          </CardContent>
+        </Card>
 
         {/* Liens rapides */}
         <Card>

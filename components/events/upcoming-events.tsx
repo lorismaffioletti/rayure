@@ -1,20 +1,22 @@
+import { getEvents } from '@/lib/supabase/queries/events';
 import { EventCard } from '@/components/events/event-card';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Calendar } from 'lucide-react';
-import type { Event } from '@/types/database';
 
-interface EventsListProps {
-  events: Event[];
-}
-
-export function EventsList({ events }: EventsListProps) {
-  // Filter and sort upcoming events
+export async function UpcomingEvents({ limit = 6 }: { limit?: number }) {
+  const events = await getEvents();
+  
   const upcomingEvents = events
-    .filter((event) => event.date && new Date(event.date) >= new Date())
+    .filter((event) => {
+      if (!event.date) return false;
+      const eventDate = new Date(event.date);
+      return eventDate >= new Date();
+    })
     .sort((a, b) => {
       if (!a.date || !b.date) return 0;
       return new Date(a.date).getTime() - new Date(b.date).getTime();
-    });
+    })
+    .slice(0, limit);
 
   if (upcomingEvents.length === 0) {
     return (
